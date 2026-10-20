@@ -6,7 +6,7 @@ public class Cuenta {
     private String username;
     private String contrasenia;
     private String email;
-    private Boolean estado = true;
+    private boolean estado = true;
     private LocalDateTime creacionCuenta;
 
     //constructores
@@ -33,13 +33,10 @@ public class Cuenta {
         return creacionCuenta;
     }
 
-    public Boolean getEstado() {
+    public boolean getEstado() {
         return estado;
     }
 
-    public void setEstado(Boolean estado) {
-        this.estado = estado;
-    }
 
     public String getEmail() {
         return email;
@@ -70,4 +67,48 @@ public class Cuenta {
     }
 
     // metodos
+
+    public boolean validarConstrasenia(String aux)
+    {
+        if (aux == null) // valida si es nulo
+        {
+            return false;
+        }
+
+        if(aux.equals(contrasenia)) // valída si la constraseña ingresada es igual a la ya existente
+        {
+            return false;// en caso de no ser asi, retorna falso
+        }
+
+        if(aux.length() < 8 || aux.isBlank()) // valida si el tamaño de la contraseña nueva
+                                // es menor a 8 o si la constraseña esta tiene solo espacios
+            {
+                return false;// en caso de no ser asi, retorna falso
+            }
+
+        if(aux.contains(" ")) // verifica si la contraseña tiene estapacios en blanco
+        {
+            return false;
+        }
+
+        return true; // si pasa los 2 filtros de verificacion devuelve verdadero
+    }
+
+    public String cambiarContrasenia(String contNueva)
+    {
+        if(validarConstrasenia(contNueva))
+        {
+            contrasenia = contNueva;
+            return "contrasenia cambiado con exito";
+        }
+
+        return "la contrasenia no se pudo cambiar...";
+    }
+
+    public void switchEstado()
+    {
+        estado = !estado;
+    }
+
+
 }
