@@ -1,6 +1,6 @@
 import java.time.LocalDateTime;
 
-public class Cuenta {
+public abstract class Cuenta {
     private String id;
     private static Integer contadorID = 0;
     private String username;
