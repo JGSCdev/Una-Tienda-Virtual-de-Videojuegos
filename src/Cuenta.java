@@ -26,6 +26,7 @@ public abstract class Cuenta {
     public Cuenta() {
         contadorID++;
         id = contadorID.toString();
+        this.creacionCuenta = LocalDateTime.now();
     }
 
     //Getters y setters
@@ -109,6 +110,8 @@ public abstract class Cuenta {
     {
         estado = !estado;
     }
+
+
 
 
 }
