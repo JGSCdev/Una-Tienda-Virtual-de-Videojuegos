@@ -1,6 +1,6 @@
 import java.time.LocalDateTime;
 
-public class Usuario extends Cuenta{
+public abstract class Usuario extends Cuenta{
     private String descripcion;
     private String nacionalidad;
     private String alias;
@@ -19,9 +19,6 @@ public class Usuario extends Cuenta{
         this.nombre = nombre;
         this.apellido = apellido;
         this.fechaNacimiento = fechaNacimiento;
-    }
-
-    public Usuario() {
     }
 
     //getters y setters
@@ -74,10 +71,5 @@ public class Usuario extends Cuenta{
     public void setFechaNacimiento(LocalDateTime fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
-
-    //metodos
-
-    //por definir...
-
 
 }
