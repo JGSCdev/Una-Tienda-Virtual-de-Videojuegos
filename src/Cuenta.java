@@ -1,114 +1,158 @@
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class Cuenta {
-    private String id;
-    private static Integer contadorID = 0;
+    private final String id;
     private String username;
     private String contrasenia;
     private String email;
-    private boolean estado = true;
-    private LocalDateTime creacionCuenta;
+    private boolean estado;
+    private final LocalDateTime creacionCuenta;
 
-    //constructores
+    // Constructor
+    public Cuenta(String username, String contrasenia, String email) throws IllegalArgumentException{
+        if (username == null || username.isBlank()) { // verifica si el username ingresado es null o tiene espacios
+            throw new IllegalArgumentException("El usuario no puede estar vacio");
+        }
+        if (email == null || email.isBlank()) { // verifica si el email ingresado es null o tiene espacios
+            throw new IllegalArgumentException("El email no puede estar vacio");
+        }
+        if (!cumpleRequisitosContrasenia(contrasenia)) { //verifica si la constraseña cumple con los requisitos
+            throw new IllegalArgumentException("La contrasenia debe tener al menos 8 caracteres y no contener espacios");
+        }
 
-    //por defecto de cuenta
+        //usamos la excepcion de IllegalArgumentException para mostrar que el usuario puso mal alguno de los 3 parametros
 
-
-    public Cuenta(String username, String contrasenia, String email) {
+        this.id = UUID.randomUUID().toString(); // genera un uuid unico para cada cuenta en general
         this.username = username;
         this.contrasenia = contrasenia;
         this.email = email;
+        this.estado = true; // por defecto
         this.creacionCuenta = LocalDateTime.now();
-        contadorID++;
-        id = contadorID.toString();
     }
 
-    public Cuenta() {
-        contadorID++;
-        id = contadorID.toString();
+    // Recuperar una cuenta existente de la base de datos.
+    // Este constructor NO crea otro ID ni cambia la fecha original.
+    protected Cuenta(String id, String username, String contrasenia,
+                     String email, boolean estado, LocalDateTime creacionCuenta) {
+        this.id = id;
+        this.username = username;
+        this.contrasenia = contrasenia;
+        this.email = email;
+        this.estado = estado;
+        this.creacionCuenta = creacionCuenta;
+    }
+
+    private boolean cumpleRequisitosContrasenia(String clave) { //comprueba los requisitos que necesita la contraseña para ser correcta
+
+        if (clave == null) { // si es nula
+            return false;
+        }
+        if (clave.length() < 10) { // comprueba si su longitud es mayor a 10
+            return false;
+        }
+        if (clave.isBlank() || clave.contains(" ")) { // verifica si contiene espacios en blanco
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validarContrasenia(String ingresada) { //este metodo se va a usar mas que nada en el inicio de sesion
+
+        return ingresada != null && ingresada.equals(contrasenia);
+    }
+
+    public boolean validarContraseniaNueva(String nueva) {
+        if (!cumpleRequisitosContrasenia(nueva)) {  // usa el metodo para verificar la contraseña
+            return false;
+        }
+        if (nueva.equals(contrasenia)) { // revisa si la contraseña nueva es igual a la que se quiere cambiar
+            return false;
+        }
+        return true;
+    }
+
+    public boolean cambiarContrasenia(String actual, String nueva) {
+        if (!estado) { //primero se fija si esta activa la cuenta
+            return false;
+        }
+        if (!validarContrasenia(actual)) { // despues valida si la contraseña puesta como actual es realmente la actual
+            return false;
+        }
+        if (!validarContraseniaNueva(nueva)) { // antes de terminar lavida la contraseña nueva
+            return false;
+        }
+
+        // si logro pasar todos los filtros se cambia la contraseña
+        this.contrasenia = nueva;
+        return true;
+    }
+
+    public void darDeBaja() {
+        estado = false;
+    }
+
+    public void reactivar() {
+        estado = true;
     }
 
     //Getters y setters
-    public LocalDateTime getCreacionCuenta() {
-        return creacionCuenta;
-    }
-
-    public boolean getEstado() {
-        return estado;
-    }
-
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getContrasenia() {
-        return contrasenia;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public static Integer getContadorID() {
-        return contadorID;
-    }
 
     public String getId() {
         return id;
     }
+    public String getUsername() {
+        return username;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public boolean getEstado() {
+        return estado;
+    }
+    public LocalDateTime getCreacionCuenta() {
+        return creacionCuenta;
+    }
 
-    // metodos
+    public void setUsername(String username) throws IllegalArgumentException {
+        if (username == null || username.isBlank()) { // aca valida si no es nulo y si tiene espacios en blanco
+            throw new IllegalArgumentException("El usuario no puede estar vacio");
+        }
+        this.username = username;
+    }
 
-    public boolean validarConstrasenia(String aux)
-    {
-        if (aux == null) // valida si es nulo
-        {
+    public void setEmail(String email) throws IllegalArgumentException{
+        if (email == null || email.isBlank()) { // aca valida si no es nulo y si tiene espacios en blanco
+            throw new IllegalArgumentException("El email no puede estar vacio");
+        }
+        this.email = email;
+    }
+
+    @Override
+    public final boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Cuenta)) {
             return false;
         }
-
-        if(aux.equals(contrasenia)) // valída si la constraseña ingresada es igual a la ya existente
-        {
-            return false;// en caso de no ser asi, retorna falso
-        }
-
-        if(aux.length() < 8 || aux.isBlank()) // valida si el tamaño de la contraseña nueva
-                                // es menor a 8 o si la constraseña esta tiene solo espacios
-            {
-                return false;// en caso de no ser asi, retorna falso
-            }
-
-        if(aux.contains(" ")) // verifica si la contraseña tiene estapacios en blanco
-        {
-            return false;
-        }
-
-        return true; // si pasa los 2 filtros de verificacion devuelve verdadero
+        Cuenta otra = (Cuenta) obj;
+        return id.equals(otra.id);
     }
 
-    public String cambiarContrasenia(String contNueva)
-    {
-        if(validarConstrasenia(contNueva))
-        {
-            contrasenia = contNueva;
-            return "contrasenia cambiado con exito";
-        }
-
-        return "la contrasenia no se pudo cambiar...";
+    @Override
+    public final int hashCode() {
+        return id.hashCode();
     }
 
-    public void switchEstado()
-    {
-        estado = !estado;
+    @Override
+    public String toString() {
+        return "\n----------- Cuenta ----------\n" +
+                "ID: " + id + '\n' +
+                "Username: " + username + '\n' +
+                "Email: " + email + '\n' +
+                "Estado: " + estado + '\n' +
+                "Creacion de la Cuenta: " + creacionCuenta + '\n' +
+                "-----------------------------\n";
     }
-
-
 }
