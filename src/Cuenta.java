@@ -1,7 +1,7 @@
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class Cuenta {
+public abstract class Cuenta {
     private final String id;
     private String username;
     private String contrasenia;
