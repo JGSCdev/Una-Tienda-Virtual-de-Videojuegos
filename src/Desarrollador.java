@@ -1,8 +1,9 @@
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public final class Desarrollador extends Usuario {
+public final class Desarrollador extends Usuario implements ControlJuegos{
     private Set<Producto> catalogoPropio = new LinkedHashSet<>();
     private Double ganancias = 0.0;
     private Double valoracionGeneral = 0.0;
@@ -13,10 +14,6 @@ public final class Desarrollador extends Usuario {
     public Desarrollador(String username, String contrasenia, String email, String descripcion, String nacionalidad, String alias, String nombre, String apellido, LocalDateTime fechaNacimiento) {
         super(username, contrasenia, email, descripcion, nacionalidad, alias, nombre, apellido, fechaNacimiento);
     }
-
-    public Desarrollador() {
-    }
-
     // getters y setters
 
 
@@ -52,9 +49,22 @@ public final class Desarrollador extends Usuario {
         // por definir
     }
 
-    public void darDeBajaProducto()
+    public void darDeBajaProducto(Producto Producto)
     {
-        // a definir
+
+        Iterator<Producto> iterator = catalogoPropio.iterator();
+
+        while(iterator.hasNext())
+        {
+            Producto aux = iterator.next();
+
+            if(aux.equals(Producto))
+            {
+                catalogoPropio.remove(aux);
+            }
+        }
     }
+
+
 
 }
