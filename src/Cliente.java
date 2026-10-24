@@ -69,7 +69,7 @@ public class Cliente extends Usuario{
             return false;
         }
 
-        carrito.add(producto);
+        biblioteca.add(producto);
         saldo = saldo - producto.getPrecio();
 
         return true;
@@ -89,6 +89,23 @@ public class Cliente extends Usuario{
         return true;
     }
 
+    public void eliminarDelCarrito(Producto Producto)
+    {
+
+        Iterator<Producto> iterator = carrito.iterator();
+
+        while(iterator.hasNext())
+        {
+            Producto aux = iterator.next();
+
+            if(aux.equals(Producto))
+            {
+                carrito.remove(aux);
+                break;
+            }
+        }
+    }
+
     public boolean agregarAmigo(Cliente amigo)
     {
         for(Cliente aux : amigos)
@@ -100,6 +117,34 @@ public class Cliente extends Usuario{
         }
 
         amigos.add(amigo);
+        return true;
+    }
+
+    public void eliminarAmigo(Cliente amigo)
+    {
+
+        Iterator<Cliente> iterator = amigos.iterator();
+
+        while(iterator.hasNext())
+        {
+            Cliente aux = iterator.next();
+
+            if(aux.equals(amigo))
+            {
+                amigos.remove(aux);
+                break;
+            }
+        }
+    }
+
+    public boolean agregarSaldo(double monto)
+    {
+        if(monto <= 0)
+        {
+            return false;
+        }
+
+        saldo = saldo + monto;
         return true;
     }
 }
