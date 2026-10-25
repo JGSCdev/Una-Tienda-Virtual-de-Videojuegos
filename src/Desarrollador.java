@@ -10,10 +10,11 @@ public final class Desarrollador extends Usuario implements ControlJuegos{
 
     // constructores
 
-
-    public Desarrollador(String username, String contrasenia, String email, String descripcion, String nacionalidad, String alias, String nombre, String apellido, LocalDateTime fechaNacimiento) {
-        super(username, contrasenia, email, descripcion, nacionalidad, alias, nombre, apellido, fechaNacimiento);
+    public Desarrollador(String username, String contrasenia, String email, String nacionalidad, String nombre, String apellido, LocalDateTime fechaNacimiento) {
+        super(username, contrasenia, email, nacionalidad, nombre, apellido, fechaNacimiento);
     }
+
+
     // getters y setters
 
 
@@ -61,6 +62,7 @@ public final class Desarrollador extends Usuario implements ControlJuegos{
             if(aux.equals(Producto))
             {
                 catalogoPropio.remove(aux);
+                break;
             }
         }
     }
