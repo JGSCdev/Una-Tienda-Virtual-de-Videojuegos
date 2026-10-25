@@ -1,6 +1,7 @@
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class Productos {
 
@@ -56,10 +57,6 @@ public abstract class Productos {
         return resenia;
     }
 
-    public void setResenia(Map<String, Resenias> resenia) {
-        this.resenia = resenia;
-    }
-
     public double getPeso_GB() {
         return peso_GB;
     }
@@ -112,6 +109,17 @@ public abstract class Productos {
         return id;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Productos productos = (Productos) o;
+        return Objects.equals(id, productos.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 
 
 }

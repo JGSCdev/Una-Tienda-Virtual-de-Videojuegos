@@ -1,4 +1,4 @@
-public class DLCs extends Productos{
+public final class DLCs extends Productos{
 
     private Juegos juego;
     private TipoContenido;

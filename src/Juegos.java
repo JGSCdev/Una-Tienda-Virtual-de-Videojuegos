@@ -20,11 +20,11 @@ public final class  Juegos extends Productos{
         this.requisitosMinimos = requisitosMinimos;
         this.requisitosRecomendados = requisitosRecomendados;
     }
-/*
+
     public void agregarDlc(DLCs dlc) {
             this.dlCs.add(dlc);
     }
-*/
+
     public String getRequisitosMinimos() {
         return requisitosMinimos;
     }

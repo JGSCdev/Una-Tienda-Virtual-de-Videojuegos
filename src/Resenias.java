@@ -32,10 +32,6 @@ public class Resenias{
         return fecha_publicacion;
     }
 
-    public void setFecha_publicacion(LocalDate fecha_publicacion) {
-        this.fecha_publicacion = fecha_publicacion;
-    }
-
     public double getValoracion() {
         return valoracion;
     }
