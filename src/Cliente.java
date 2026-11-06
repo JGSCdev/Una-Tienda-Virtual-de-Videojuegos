@@ -13,8 +13,22 @@ public class Cliente extends Usuario{
     // cnostructores
 
 
-    public Cliente(String username, String contrasenia, String email, String descripcion, String nacionalidad, String alias, String nombre, String apellido, LocalDateTime fechaNacimiento) {
-        super(username, contrasenia, email, descripcion, nacionalidad, alias, nombre, apellido, fechaNacimiento);
+    public Cliente(String username, String contrasenia, String email, String nacionalidad, String nombre, String apellido, LocalDateTime fechaNacimiento) {
+        super(username, contrasenia, email, nacionalidad, nombre, apellido, fechaNacimiento);
+    }
+
+    public Cliente(int id, String username, String contrasenia, String email, boolean estado, String descripcion, String nacionalidad, String nombre, String apellido, LocalDateTime fechaNacimiento, Set<Producto> biblioteca, Double saldo, List<Producto> historial, TreeSet<Cliente> amigos, Double tiempoConectado, List<Producto> carrito, LocalDateTime fechaUltimaConexion) {
+        super(id, username, contrasenia, email, estado, descripcion, nacionalidad, nombre, apellido, fechaNacimiento);
+        this.biblioteca = biblioteca;
+        this.saldo = saldo;
+        this.historial = historial;
+        this.amigos = amigos;
+        this.tiempoConectado = tiempoConectado;
+        this.carrito = carrito;
+        this.fechaUltimaConexion = fechaUltimaConexion;
+    }
+
+    public Cliente() {
     }
 
     //getters y setters
