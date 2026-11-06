@@ -1,8 +1,7 @@
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public abstract class Usuario {
-    private final String id;
+    private Integer id;
     private String username;
     private String contrasenia;
     private String email;
@@ -27,7 +26,6 @@ public abstract class Usuario {
             throw new IllegalArgumentException("La contrasenia debe tener al menos 8 caracteres y no contener espacios");
         }
 
-        this.id = UUID.randomUUID().toString();
         this.username = username;
         this.contrasenia = contrasenia;
         this.email = email;
@@ -37,7 +35,7 @@ public abstract class Usuario {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public Usuario(String id, String username, String contrasenia, String email, boolean estado, String descripcion, String nacionalidad, String nombre, String apellido, LocalDateTime fechaNacimiento) {
+    public Usuario(int id, String username, String contrasenia, String email, boolean estado, String descripcion, String nacionalidad, String nombre, String apellido, LocalDateTime fechaNacimiento) {
         this.id = id;
         this.username = username;
         this.contrasenia = contrasenia;
@@ -50,11 +48,21 @@ public abstract class Usuario {
         this.fechaNacimiento = fechaNacimiento;
     }
 
+    public Usuario() {
+
+    }
+
     //getters y setters
 
-    public String getId() {
+    public int getId() {
         return id;
     }
+
+    public void setID(int id)
+    {
+        this.id = id;
+    }
+
     public String getUsername() {
         return username;
     }

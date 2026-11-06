@@ -14,6 +14,15 @@ public final class Desarrollador extends Usuario implements ControlJuegos{
         super(username, contrasenia, email, nacionalidad, nombre, apellido, fechaNacimiento);
     }
 
+    public Desarrollador(int id, String username, String contrasenia, String email, boolean estado, String descripcion, String nacionalidad, String nombre, String apellido, LocalDateTime fechaNacimiento, Set<Producto> catalogoPropio, Double ganancias, Double valoracionGeneral) {
+        super(id, username, contrasenia, email, estado, descripcion, nacionalidad, nombre, apellido, fechaNacimiento);
+        this.catalogoPropio = catalogoPropio;
+        this.ganancias = ganancias;
+        this.valoracionGeneral = valoracionGeneral;
+    }
+
+    public Desarrollador() {
+    }
 
     // getters y setters
 
