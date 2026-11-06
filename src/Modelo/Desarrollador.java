@@ -1,9 +1,11 @@
+package Modelo;
+
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public final class Desarrollador extends Usuario implements ControlJuegos{
+public final class Desarrollador extends Usuario implements ControlJuegos {
     private Set<Producto> catalogoPropio = new LinkedHashSet<>();
     private Double ganancias = 0.0;
     private Double valoracionGeneral = 0.0;
