@@ -3,7 +3,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public final class Desarrollador extends Usuario implements ControlJuegos{
+public final class Desarrollador extends Usuario implements iControlJuegos {
     private Set<Producto> catalogoPropio = new LinkedHashSet<>();
     private Double ganancias = 0.0;
     private Double valoracionGeneral = 0.0;
@@ -76,6 +76,33 @@ public final class Desarrollador extends Usuario implements ControlJuegos{
         }
     }
 
+    @Override
+    public void darAltaJuego(Juego juego) {
 
+    }
 
+    @Override
+    public void darAltaDLC(DLC dlc) {
+
+    }
+
+    @Override
+    public void DarBajaJuego(int id) {
+
+    }
+
+    @Override
+    public void DarBajaDLC(int id) {
+
+    }
+
+    @Override
+    public void modificarJuego(Juego juego) {
+
+    }
+
+    @Override
+    public void modificarDLC(DLC dlc) {
+
+    }
 }
