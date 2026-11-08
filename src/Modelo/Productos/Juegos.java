@@ -1,8 +1,12 @@
+package Modelo.Productos;
+
+import Modelo.Cuentas.Desarrollador;
+
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class  Juegos extends Productos{
+public final class Juegos extends Productos {
 
     private GenerosJuegos genero;
     private List<DLCs> dlCs;

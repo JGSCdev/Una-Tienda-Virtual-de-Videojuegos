@@ -1,21 +1,26 @@
+package Modelo;
+
+import Modelo.Cuentas.Cliente;
+import Modelo.Cuentas.Usuarios;
+
 import java.time.LocalDate;
 
 public class Resenias{
 
     private double valoracion;
     private String comentario;
-    private Usuarios usuario;
+    private Cliente cliente;
     private LocalDate fecha_publicacion;
 
-    public Resenias(String comentario, Usuarios usuario, double valoracion) {
+    public Resenias(String comentario, Cliente cliente, double valoracion) {
         this.comentario = comentario;
         this.fecha_publicacion = LocalDate.now();
-        this.usuario = usuario;
+        this.cliente = cliente;
         this.valoracion = valoracion;
     }
 
-    public Resenias(Usuarios usuario, double valoracion) {
-        this.usuario = usuario;
+    public Resenias(Cliente cliente, double valoracion) {
+        this.cliente = cliente;
         this.valoracion = valoracion;
         this.fecha_publicacion = LocalDate.now();
     }
