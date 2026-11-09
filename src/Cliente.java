@@ -1,30 +1,47 @@
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class Cliente extends Usuario{
+public class Cliente extends Usuario implements Comparable<Cliente>{
     private Set<Producto> biblioteca = new HashSet<>();
-    private Double saldo = 0.0;
-    private List<Producto> historial = new ArrayList<>();
+    private double saldo = 0.0;
     private TreeSet<Cliente> amigos = new TreeSet<>();
-    private Double tiempoConectado = 0.0;
+    private double tiempoConectado = 0.0;
     private List<Producto> carrito = new ArrayList<>();
     private LocalDateTime fechaUltimaConexion = LocalDateTime.now();
 
     // cnostructores
 
 
-    public Cliente(String username, String contrasenia, String email, String nacionalidad, String nombre, String apellido, LocalDateTime fechaNacimiento) {
+    public Cliente(String username, String contrasenia, String email, String nacionalidad, String nombre, String apellido, LocalDate fechaNacimiento) {
         super(username, contrasenia, email, nacionalidad, nombre, apellido, fechaNacimiento);
     }
 
-    public Cliente(int id, String username, String contrasenia, String email, boolean estado, String descripcion, String nacionalidad, String nombre, String apellido, LocalDateTime fechaNacimiento, Set<Producto> biblioteca, Double saldo, List<Producto> historial, TreeSet<Cliente> amigos, Double tiempoConectado, List<Producto> carrito, LocalDateTime fechaUltimaConexion) {
-        super(id, username, contrasenia, email, estado, descripcion, nacionalidad, nombre, apellido, fechaNacimiento);
-        this.biblioteca = biblioteca;
+    public Cliente(int id, String username, String contrasenia, String email, boolean estado, LocalDateTime creacionCuenta, String descripcion, String nacionalidad, String nombre, String apellido, LocalDate fechaNacimiento, Set<Producto> biblioteca, double saldo, TreeSet<Cliente> amigos, double tiempoConectado, List<Producto> carrito, LocalDateTime fechaUltimaConexion) {
+        super(id, username, contrasenia, email, estado, creacionCuenta, descripcion, nacionalidad, nombre, apellido, fechaNacimiento);
+
+        if (biblioteca == null) {
+            this.biblioteca = new HashSet<>();
+        } else {
+            this.biblioteca = new HashSet<>(biblioteca);
+        }
+
         this.saldo = saldo;
-        this.historial = historial;
-        this.amigos = amigos;
+
+        if (amigos == null) {
+            this.amigos = new TreeSet<>();
+        } else {
+            this.amigos = new TreeSet<>(amigos);
+        }
+
         this.tiempoConectado = tiempoConectado;
-        this.carrito = carrito;
+
+        if (carrito == null) {
+            this.carrito = new ArrayList<>();
+        } else {
+            this.carrito = new ArrayList<>(carrito);
+        }
+
         this.fechaUltimaConexion = fechaUltimaConexion;
     }
 
@@ -38,19 +55,16 @@ public class Cliente extends Usuario{
         return biblioteca;
     }
 
-    public Double getSaldo() {
+    public double getSaldo() {
         return saldo;
     }
 
-    public List<Producto> getHistorial() {
-        return historial;
-    }
 
     public TreeSet<Cliente> getAmigos() {
         return amigos;
     }
 
-    public Double getTiempoConectado() {
+    public double getTiempoConectado() {
         return tiempoConectado;
     }
 
@@ -62,11 +76,13 @@ public class Cliente extends Usuario{
         return fechaUltimaConexion;
     }
 
-    public void setSaldo(Double saldo) {
-        this.saldo = saldo;
-    }
 
-    public void setTiempoConectado(Double tiempoConectado) {
+
+    public void setTiempoConectado(double tiempoConectado) {
+        if(tiempoConectado < 0)
+        {
+            return;
+        }
         this.tiempoConectado = tiempoConectado;
     }
 
@@ -76,79 +92,56 @@ public class Cliente extends Usuario{
 
     // metodos
 
-    public boolean comprarProducto(Producto producto)
-    {
-        if( !(saldo >= producto.getPrecio()) )
-        {
+    public boolean comprarProducto(Producto producto) {
+
+        if (producto == null) {
             return false;
         }
 
-        biblioteca.add(producto);
-        saldo = saldo - producto.getPrecio();
+        double precio = producto.getPrecio();
+
+        if (precio < 0 || saldo < precio) {
+            return false;
+        }
+
+        if (!biblioteca.add(producto)) {
+            return false;
+        }
+
+        saldo -= precio;
 
         return true;
     }
 
-    public boolean agregarAlCarrito(Producto producto)
-    {
-        for(Producto aux : carrito)
-        {
-            if(producto.equals(aux))
-            {
-                return false;
-            }
+    public boolean agregarAlCarrito(Producto producto) {
+        if (producto == null || carrito.contains(producto)) {
+            return false;
         }
 
-        carrito.add(producto);
-        return true;
+        return carrito.add(producto);
     }
 
-    public void eliminarDelCarrito(Producto Producto)
-    {
-
-        Iterator<Producto> iterator = carrito.iterator();
-
-        while(iterator.hasNext())
-        {
-            Producto aux = iterator.next();
-
-            if(aux.equals(Producto))
-            {
-                carrito.remove(aux);
-                break;
-            }
-        }
+    public void eliminarDelCarrito(Producto producto) {
+        carrito.remove(producto);
     }
 
-    public boolean agregarAmigo(Cliente amigo)
-    {
-        for(Cliente aux : amigos)
-        {
-            if(amigo.equals(aux))
-            {
-                return false;
-            }
+    public boolean agregarAmigo(Cliente amigo) {
+
+        if (amigo == null) {
+            return false;
         }
 
-        amigos.add(amigo);
-        return true;
+        Integer idAmigo = amigo.getId();
+
+        if(idAmigo == null || amigo.equals(this))
+        {
+            return false;
+        }
+        return amigos.add(amigo);
     }
 
-    public void eliminarAmigo(Cliente amigo)
-    {
-
-        Iterator<Cliente> iterator = amigos.iterator();
-
-        while(iterator.hasNext())
-        {
-            Cliente aux = iterator.next();
-
-            if(aux.equals(amigo))
-            {
-                amigos.remove(aux);
-                break;
-            }
-        }
+    public void eliminarAmigo(Cliente amigo) {
+        amigos.remove(amigo);
     }
 
     public boolean agregarSaldo(double monto)
@@ -160,5 +153,15 @@ public class Cliente extends Usuario{
 
         saldo = saldo + monto;
         return true;
+    }
+
+    public void registrarConexion() {
+        fechaUltimaConexion = LocalDateTime.now();
+    }
+
+
+    @Override
+    public int compareTo(Cliente otro) {
+        return Integer.compare(this.getId(), otro.getId());
     }
 }
