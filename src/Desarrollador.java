@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -5,17 +6,17 @@ import java.util.Set;
 
 public final class Desarrollador extends Usuario implements iControlJuegos {
     private Set<Producto> catalogoPropio = new LinkedHashSet<>();
-    private Double ganancias = 0.0;
-    private Double valoracionGeneral = 0.0;
+    private double ganancias = 0.0;
+    private double valoracionGeneral = 0.0;
 
     // constructores
 
-    public Desarrollador(String username, String contrasenia, String email, String nacionalidad, String nombre, String apellido, LocalDateTime fechaNacimiento) {
+    public Desarrollador(String username, String contrasenia, String email, String nacionalidad, String nombre, String apellido, LocalDate fechaNacimiento) {
         super(username, contrasenia, email, nacionalidad, nombre, apellido, fechaNacimiento);
     }
 
-    public Desarrollador(int id, String username, String contrasenia, String email, boolean estado, String descripcion, String nacionalidad, String nombre, String apellido, LocalDateTime fechaNacimiento, Set<Producto> catalogoPropio, Double ganancias, Double valoracionGeneral) {
-        super(id, username, contrasenia, email, estado, descripcion, nacionalidad, nombre, apellido, fechaNacimiento);
+    public Desarrollador(int id, String username, String contrasenia, String email, boolean estado, LocalDateTime creacionCuenta, String descripcion, String nacionalidad, String nombre, String apellido, LocalDate fechaNacimiento, Set<Producto> catalogoPropio, double ganancias, double valoracionGeneral) {
+        super(id, username, contrasenia, email, estado, creacionCuenta, descripcion, nacionalidad, nombre, apellido, fechaNacimiento);
         this.catalogoPropio = catalogoPropio;
         this.ganancias = ganancias;
         this.valoracionGeneral = valoracionGeneral;
