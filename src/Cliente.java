@@ -87,6 +87,10 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
     }
 
     public void setFechaUltimaConexion(LocalDateTime fechaUltimaConexion) {
+        if(fechaUltimaConexion == null)
+        {
+            return;
+        }
         this.fechaUltimaConexion = fechaUltimaConexion;
     }
 
