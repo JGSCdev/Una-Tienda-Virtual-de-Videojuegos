@@ -6,8 +6,9 @@ public class Soporte extends Gestores {
 
     private List<String> quejas;
 
-    public Soporte(String username, String contrasenia, String email) {
-        super(username, contrasenia, email);
+    public Soporte(String contrasenia, String pin)
+    {
+        super(contrasenia, pin);
         this.quejas = new ArrayList<>();
     }
 
@@ -15,15 +16,16 @@ public class Soporte extends Gestores {
         if (queja == null || queja.isBlank()) {
             throw new IllegalArgumentException("La queja no puede estar vacía");
         }
-
         quejas.add(queja);
     }
+
+/*posible cambio en el umodifyable*/
 
     public List<String> consultarQuejas() {
         return Collections.unmodifiableList(quejas);
     }
 
-    public void atenderConsulta(String queja) {
+    public void atenderQueja(String queja) {
         quejas.remove(queja);
     }
 
