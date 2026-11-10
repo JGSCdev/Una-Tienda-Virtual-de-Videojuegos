@@ -4,15 +4,16 @@ import java.util.Map;
 
 public class Gestores  {
 
+
     private String contrasenia;
     private String pin;
     private Map<String, Usuario> listaUsuarios = new HashMap<>();
+
 
     public Gestores(String contrasenia, String pin)
     {
         this.contrasenia = contrasenia;
         this.pin = pin;
-
     }
 
     public Gestores() {
@@ -34,6 +35,10 @@ public class Gestores  {
 
     //-------------------------------------METODOS---------------------------------------------------
 
+
+    //queda como posible fururo metodo privado en el que agregar cosas a la lisa, o no
+
+    /*
     public void agregarUsuario(Usuario Usuario)
     {
         if (Usuario != null) // Si la Usuario no es null
@@ -41,6 +46,7 @@ public class Gestores  {
             listaUsuarios.put(Usuario.getId(), Usuario); // Guarda el objeto usando su ID como clave
         }
     }
+*/
 
 
     public Usuario buscarUsuarioPorID(String id)
@@ -59,7 +65,6 @@ public class Gestores  {
         }
         // Si existe, utiliza sus setters para modificar
         // sus atributos
-
     }
 
 
@@ -81,8 +86,6 @@ public class Gestores  {
         return "";
     }
 
-
-
     public void reactivarUsuario(String id)
     {
         Usuario Usuario = buscarUsuarioPorID(id); // Busca la Usuario por su ID
@@ -94,18 +97,12 @@ public class Gestores  {
     }
 
 
-    public void reactivarUsuario(String id)
-    {
-        darAltaUsuario(id); //Reactiva una Usuario llamando a darAltaUsuario()
-    }
-
-
     @Override
     public String toString() {
-        return super.toString();
+        return "Gestores{" +
+                "contrasenia='" + contrasenia + '\'' +
+                ", pin='" + pin + '\'' +
+                ", listaUsuarios=" + listaUsuarios +
+                '}';
     }
-
-
-
-
 }
