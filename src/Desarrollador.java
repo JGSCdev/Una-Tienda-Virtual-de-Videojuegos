@@ -88,13 +88,14 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
     }
 
     public boolean darDeBajaProducto(Producto producto) {
+        if (producto == null) return false;
 
-        if (producto == null) {
-            return false;
-        }
+        if (!catalogoPropio.contains(producto)) return false;
 
-        return catalogoPropio.remove(producto);
+        producto.darDeBaja();
+        return true;
     }
+
 
     @Override
     public void darAltaJuego(Juego juego) {
