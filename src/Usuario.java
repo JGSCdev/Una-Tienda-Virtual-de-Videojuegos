@@ -1,22 +1,23 @@
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Objects;
 
 public abstract class Usuario {
-    private final String id;
+    private int id;
     private String username;
     private String contrasenia;
     private String email;
     private boolean estado = true;
-    private final LocalDateTime creacionCuenta = LocalDateTime.now();
+    private final LocalDateTime creacionCuenta;
     private String descripcion = null;
     private String nacionalidad;
     private String nombre;
     private String apellido;
-    private LocalDateTime fechaNacimiento;
+    private LocalDate fechaNacimiento;
 
     // constructores
 
-    public Usuario(String username, String contrasenia, String email, String nacionalidad, String nombre, String apellido, LocalDateTime fechaNacimiento) {
+    public Usuario(String username, String contrasenia, String email, String nacionalidad, String nombre, String apellido, LocalDate fechaNacimiento) {
         if (username == null || username.isBlank()) { // verifica si el username ingresado es null o tiene espacios
             throw new IllegalArgumentException("El usuario no puede estar vacio");
         }
@@ -24,10 +25,9 @@ public abstract class Usuario {
             throw new IllegalArgumentException("El email no puede estar vacio");
         }
         if (!cumpleRequisitosContrasenia(contrasenia)) { //verifica si la constraseña cumple con los requisitos
-            throw new IllegalArgumentException("La contrasenia debe tener al menos 8 caracteres y no contener espacios");
+            throw new IllegalArgumentException("La contrasenia debe tener al menos 10 caracteres y no contener espacios");
         }
 
-        this.id = UUID.randomUUID().toString();
         this.username = username;
         this.contrasenia = contrasenia;
         this.email = email;
@@ -35,14 +35,16 @@ public abstract class Usuario {
         this.nombre = nombre;
         this.apellido = apellido;
         this.fechaNacimiento = fechaNacimiento;
+        this.creacionCuenta = LocalDateTime.now();
     }
 
-    public Usuario(String id, String username, String contrasenia, String email, boolean estado, String descripcion, String nacionalidad, String nombre, String apellido, LocalDateTime fechaNacimiento) {
+    public Usuario(int id, String username, String contrasenia, String email, boolean estado, LocalDateTime creacionCuenta, String descripcion, String nacionalidad, String nombre, String apellido, LocalDate fechaNacimiento) {
         this.id = id;
         this.username = username;
         this.contrasenia = contrasenia;
         this.email = email;
         this.estado = estado;
+        this.creacionCuenta = creacionCuenta;
         this.descripcion = descripcion;
         this.nacionalidad = nacionalidad;
         this.nombre = nombre;
@@ -50,11 +52,21 @@ public abstract class Usuario {
         this.fechaNacimiento = fechaNacimiento;
     }
 
+    public Usuario() {
+        this.creacionCuenta = LocalDateTime.now();
+    }
+
     //getters y setters
 
-    public String getId() {
+    public int getId() {
         return id;
     }
+
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -115,11 +127,11 @@ public abstract class Usuario {
         this.apellido = apellido;
     }
 
-    public LocalDateTime getFechaNacimiento() {
+    public LocalDate getFechaNacimiento() {
         return fechaNacimiento;
     }
 
-    public void setFechaNacimiento(LocalDateTime fechaNacimiento) {
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
 
@@ -179,20 +191,14 @@ public abstract class Usuario {
     }
 
     @Override
-    public final boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof Usuario)) {
-            return false;
-        }
-        Usuario otra = (Usuario) obj;
-        return id.equals(otra.id);
+    public boolean equals(Object o) {
+        if (!(o instanceof Usuario usuario)) return false;
+        return id == usuario.id;
     }
 
     @Override
-    public final int hashCode() {
-        return id.hashCode();
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
     @Override
