@@ -1,2 +1,2 @@
-public class Juego {
+public class Juego extends Producto{
 }

@@ -1,5 +1,6 @@
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -17,7 +18,13 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
 
     public Desarrollador(int id, String username, String contrasenia, String email, boolean estado, LocalDateTime creacionCuenta, String descripcion, String nacionalidad, String nombre, String apellido, LocalDate fechaNacimiento, Set<Producto> catalogoPropio, double ganancias, double valoracionGeneral) {
         super(id, username, contrasenia, email, estado, creacionCuenta, descripcion, nacionalidad, nombre, apellido, fechaNacimiento);
-        this.catalogoPropio = catalogoPropio;
+
+        if (catalogoPropio == null) {
+            this.catalogoPropio = new LinkedHashSet<>();
+        } else {
+            this.catalogoPropio = new LinkedHashSet<>(catalogoPropio);
+        }
+
         this.ganancias = ganancias;
         this.valoracionGeneral = valoracionGeneral;
     }
@@ -29,14 +36,18 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
 
 
     public Set<Producto> obtenerCatalogoPropio() {
-        return catalogoPropio;
+        return Collections.unmodifiableSet(catalogoPropio);
     }
 
-    public Double getGanancias() {
+    public double getGanancias() {
         return ganancias;
     }
 
-    public void setGanancias(Double ganancias) {
+    public void setGanancias(double ganancias) {
+        if (ganancias < 0) {
+            return;
+        }
+
         this.ganancias = ganancias;
     }
 
@@ -50,9 +61,25 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
 
     //metodos
 
-    public void publicarProducto(Producto producto)
-    {
-        catalogoPropio.add(producto);
+    private Producto buscarProductoPropio(int id) {
+
+        for (Producto producto : catalogoPropio) {
+
+            if (producto.getId() == id) {
+                return producto;
+            }
+        }
+
+        return null;
+    }
+
+    public boolean publicarProducto(Producto producto) {
+
+        if (producto == null) {
+            return false;
+        }
+
+        return catalogoPropio.add(producto);
     }
 
     public void modificarProducto()
@@ -60,21 +87,13 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
         // por definir
     }
 
-    public void darDeBajaProducto(Producto Producto)
-    {
+    public boolean darDeBajaProducto(Producto producto) {
 
-        Iterator<Producto> iterator = catalogoPropio.iterator();
-
-        while(iterator.hasNext())
-        {
-            Producto aux = iterator.next();
-
-            if(aux.equals(Producto))
-            {
-                catalogoPropio.remove(aux);
-                break;
-            }
+        if (producto == null) {
+            return false;
         }
+
+        return catalogoPropio.remove(producto);
     }
 
     @Override
@@ -98,12 +117,40 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
     }
 
     @Override
-    public void modificarJuego(Juego juego) {
+    public boolean modificarJuego(Juego juegoModificado) {
 
+        if (juegoModificado == null) {
+            return false;
+        }
+
+        Producto producto = buscarProductoPropio(juegoModificado.getId());
+
+        if (!(producto instanceof Juego juegoActual)) {
+            return false;
+        }
+
+        // Modificar los atributos de juegoActual
+        // utilizando los datos de juegoModificado.
+
+        return true;
     }
 
     @Override
-    public void modificarDLC(DLC dlc) {
+    public boolean modificarDLC(DLC dlcModificado) {
 
+        if (dlcModificado == null) {
+            return false;
+        }
+
+        Producto producto = buscarProductoPropio(dlcModificado.getId());
+
+        if (!(producto instanceof DLC dlcActual)) {
+            return false;
+        }
+
+        // Modificar los atributos de dlcActual
+        // utilizando los datos de dlcModificado.
+
+        return true;
     }
 }

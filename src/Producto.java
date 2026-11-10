@@ -1,3 +1,8 @@
 public class Producto {
-     // hola...
+     private int id;
+
+    public int getId()
+    {
+        return id;
+    }
 }
