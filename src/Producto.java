@@ -1,4 +1,4 @@
-public class Producto {
+public class Producto implements Comparable <Producto>{
      private int id;
      private boolean estado;
 
@@ -14,5 +14,10 @@ public class Producto {
 
     public void reactivar() {
         this.estado = true;
+    }
+
+    @Override
+    public int compareTo(Producto o) {
+        return 0;
     }
 }

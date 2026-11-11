@@ -1,12 +1,9 @@
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public final class Desarrollador extends Usuario implements iControlJuegos {
-    private Set<Producto> catalogoPropio = new LinkedHashSet<>();
+    private Set<Producto> catalogoPropio = new LinkedHashSet<>(Comparator.naturalOrder());
     private double ganancias = 0.0;
     private double valoracionGeneral = 0.0;
 
@@ -82,9 +79,20 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
         return catalogoPropio.add(producto);
     }
 
-    public void modificarProducto()
+    public boolean modificarProducto(Producto productoModificado)
     {
-        // por definir
+        if(productoModificado instanceof Juego)
+        {
+            if( !(buscarProductoPropio(productoModificado.getId()) == null) )
+            {
+                return false;
+            }
+
+
+
+        }
+
+        return false;
     }
 
     public boolean darDeBajaProducto(Producto producto) {
@@ -126,7 +134,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
 
         Producto producto = buscarProductoPropio(juegoModificado.getId());
 
-        if (!(producto instanceof Juego juegoActual)) {
+        if (!(producto instanceof Juego)) {
             return false;
         }
 
