@@ -17,7 +17,7 @@ public class Producto implements Comparable <Producto>{
     }
 
     @Override
-    public int compareTo(Producto o) {
-        return 0;
+    public int compareTo(Producto otro) {
+        return Integer.compare(this.getId(), otro.getId());
     }
 }

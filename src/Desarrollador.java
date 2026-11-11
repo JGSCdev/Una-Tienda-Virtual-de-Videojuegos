@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public final class Desarrollador extends Usuario implements iControlJuegos {
-    private Set<Producto> catalogoPropio = new LinkedHashSet<>(Comparator.naturalOrder());
+    private Set<Producto> catalogoPropio = new LinkedHashSet<>();
     private double ganancias = 0.0;
     private double valoracionGeneral = 0.0;
 
@@ -81,14 +81,30 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
 
     public boolean modificarProducto(Producto productoModificado)
     {
+        if (productoModificado == null) {
+            return false;
+        }
+
+        Producto aux = buscarProductoPropio(productoModificado.getId());
+
+        if (aux == null) {
+            return false;
+        }
+
         if(productoModificado instanceof Juego)
         {
-            if( !(buscarProductoPropio(productoModificado.getId()) == null) )
-            {
-                return false;
-            }
 
+            //necesito los setters de Juego
 
+            return true;
+
+        }
+
+        if(productoModificado instanceof DLC)
+        {
+            //necesito los setters de DLC
+
+            return true;
 
         }
 
@@ -138,8 +154,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
             return false;
         }
 
-        // Modificar los atributos de juegoActual
-        // utilizando los datos de juegoModificado.
+        //necesito los setters de Juego
 
         return true;
     }
@@ -153,12 +168,11 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
 
         Producto producto = buscarProductoPropio(dlcModificado.getId());
 
-        if (!(producto instanceof DLC dlcActual)) {
+        if (!(producto instanceof DLC)) {
             return false;
         }
 
-        // Modificar los atributos de dlcActual
-        // utilizando los datos de dlcModificado.
+        //necesito los setters de DLC
 
         return true;
     }
