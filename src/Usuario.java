@@ -58,11 +58,11 @@ public abstract class Usuario {
 
     //getters y setters
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setID(int id)
+    public void setId(int id)
     {
         this.id = id;
     }
@@ -189,6 +189,7 @@ public abstract class Usuario {
     public void reactivar() {
         estado = true;
     }
+
 
     @Override
     public boolean equals(Object o) {
