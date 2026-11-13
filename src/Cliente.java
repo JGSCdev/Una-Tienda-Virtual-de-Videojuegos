@@ -45,7 +45,14 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
             this.carrito = new ArrayList<>(carrito);
         }
 
-        this.fechaUltimaConexion = fechaUltimaConexion;
+        if(fechaUltimaConexion == null)
+        {
+            this.fechaUltimaConexion = LocalDateTime.now();
+        }
+        else
+        {
+            this.fechaUltimaConexion = fechaUltimaConexion;
+        }
     }
 
     public Cliente() {
@@ -89,7 +96,7 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
         {
             return;
         }
-        this.tiempoConectado = tiempoConectado; // suma el tiempo conectado al total de tiempo en general
+        this.tiempoConectado = tiempoConectado;
     }
 
     public void setFechaUltimaConexion(LocalDateTime fechaUltimaConexion) { //este set sirve mas que nada para poder asignarle un tiempo especifico, por que ya hay un metodo que actualiza esta variable
@@ -152,20 +159,18 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
 
     public boolean agregarAmigo(Cliente amigo) {
 
-        if (!getEstado()) { // primero revisa si el usuario esta baneado/fuera del sistema
+        if (amigo == null) {
             return false;
         }
 
-        if (amigo == null) { // despues revisa si el amigo que intentamos agregar esta nulo
+        if (this.getId() <= 0 || amigo.getId() <= 0) {
             return false;
         }
 
-        Integer idAmigo = amigo.getId(); // despues copiamos su id como Integer en lugar de int
-
-        if(idAmigo == null || amigo.equals(this)) // despues revisa si el id del amigo es nulo (gracias a Integer que puede compararse con nulos)
-        {
+        if (amigo.equals(this)) {
             return false;
         }
+
         return amigos.add(amigo);
     }
 
