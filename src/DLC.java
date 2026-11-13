@@ -1,2 +1,2 @@
-public class DLC extends Producto{
+public class DLC extends Productos {
 }

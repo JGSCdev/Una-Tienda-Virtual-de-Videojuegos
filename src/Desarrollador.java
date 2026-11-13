@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public final class Desarrollador extends Usuario implements iControlJuegos {
-    private Set<Producto> catalogoPropio = new LinkedHashSet<>();
+    private Set<Productos> catalogoPropio = new LinkedHashSet<>();
     private double ganancias = 0.0;
     private double valoracionGeneral = 0.0;
 
@@ -13,7 +13,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
         super(username, contrasenia, email, nacionalidad, nombre, apellido, fechaNacimiento);
     }
 
-    public Desarrollador(int id, String username, String contrasenia, String email, boolean estado, LocalDateTime creacionCuenta, String descripcion, String nacionalidad, String nombre, String apellido, LocalDate fechaNacimiento, Set<Producto> catalogoPropio, double ganancias, double valoracionGeneral) {
+    public Desarrollador(int id, String username, String contrasenia, String email, boolean estado, LocalDateTime creacionCuenta, String descripcion, String nacionalidad, String nombre, String apellido, LocalDate fechaNacimiento, Set<Productos> catalogoPropio, double ganancias, double valoracionGeneral) {
         super(id, username, contrasenia, email, estado, creacionCuenta, descripcion, nacionalidad, nombre, apellido, fechaNacimiento);
 
         if (catalogoPropio == null) {
@@ -32,7 +32,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
     // getters y setters
 
 
-    public Set<Producto> obtenerCatalogoPropio() {
+    public Set<Productos> obtenerCatalogoPropio() {
         return Collections.unmodifiableSet(catalogoPropio);
     }
 
@@ -58,9 +58,9 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
 
     //metodos
 
-    private Producto buscarProductoPropio(int id) {
+    private Productos buscarProductoPropio(int id) {
 
-        for (Producto producto : catalogoPropio) {
+        for (Productos producto : catalogoPropio) {
 
             if (producto.getId() == id) {
                 return producto;
@@ -70,7 +70,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
         return null;
     }
 
-    public boolean publicarProducto(Producto producto) {
+    public boolean publicarProducto(Productos producto) {
 
         if (producto == null) {
             return false;
@@ -79,13 +79,13 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
         return catalogoPropio.add(producto);
     }
 
-    public boolean modificarProducto(Producto productoModificado)
+    public boolean modificarProducto(Productos productoModificado)
     {
         if (productoModificado == null) {
             return false;
         }
 
-        Producto aux = buscarProductoPropio(productoModificado.getId());
+        Productos aux = buscarProductoPropio(productoModificado.getId());
 
         if (aux == null) {
             return false;
@@ -111,7 +111,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
         return false;
     }
 
-    public boolean darDeBajaProducto(Producto producto) {
+    public boolean darDeBajaProducto(Productos producto) {
         if (producto == null) return false;
 
         if (!catalogoPropio.contains(producto)) return false;
@@ -148,7 +148,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
             return false;
         }
 
-        Producto producto = buscarProductoPropio(juegoModificado.getId());
+        Productos producto = buscarProductoPropio(juegoModificado.getId());
 
         if (!(producto instanceof Juego)) {
             return false;
@@ -166,7 +166,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
             return false;
         }
 
-        Producto producto = buscarProductoPropio(dlcModificado.getId());
+        Productos producto = buscarProductoPropio(dlcModificado.getId());
 
         if (!(producto instanceof DLC)) {
             return false;
