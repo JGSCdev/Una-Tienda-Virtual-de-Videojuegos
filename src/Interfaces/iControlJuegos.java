@@ -1,3 +1,8 @@
+package Interfaces;
+
+import Modelo.DLC;
+import Modelo.Juego;
+
 public interface iControlJuegos {
 
     public void darAltaJuego(Juego juego);

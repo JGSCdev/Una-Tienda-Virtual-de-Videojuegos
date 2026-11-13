@@ -1,3 +1,5 @@
+package Modelo;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -263,7 +265,7 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
 
     @Override
     public String toString() {
-        return super.toString() + "Datos del Cliente " +
+        return super.toString() + "Datos del Modelo.Cliente " +
                                     "\n-----------------------------\n" +
                                     "Saldo disponible: " + saldo +
                                     "\nTiempo Conectado: " + tiempoConectado +

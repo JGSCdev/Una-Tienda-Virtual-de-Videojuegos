@@ -1,4 +1,5 @@
-
+package Modelo;
+import Enum.GenerosJuegos;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public final class Juego extends Producto {
             for (DLC dlc : dlCs) {
                 if (!agregarDlc(dlc)) {
                     throw new IllegalArgumentException(
-                            "No se pudo asociar un DLC al juego"
+                            "No se pudo asociar un Modelo.DLC al juego"
                     );
                 }
             }
@@ -67,7 +68,7 @@ public final class Juego extends Producto {
         }
     }
 
-    // Métodos para administrar los DLC
+    // Métodos para administrar los Modelo.DLC
 
     public boolean agregarDlc(DLC dlc) {
 
@@ -75,7 +76,7 @@ public final class Juego extends Producto {
             return false;
         }
 
-        // Un DLC no puede pertenecer a dos juegos diferentes
+        // Un Modelo.DLC no puede pertenecer a dos juegos diferentes
         if (dlc.getJuego() != null && dlc.getJuego() != this) {
             return false;
         }
@@ -169,4 +170,5 @@ public final class Juego extends Producto {
     public List<DLC> getDlCs() {
         return Collections.unmodifiableList(dlCs);
     }
+
 }

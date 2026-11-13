@@ -1,4 +1,5 @@
-
+package Modelo;
+import Enum.TipoContenido;
 import java.time.LocalDate;
 
 public final class DLC extends Producto {
@@ -6,7 +7,7 @@ public final class DLC extends Producto {
     private Juego juego;
     private TipoContenido contenido;
 
-    // Constructor para crear un DLC nuevo
+    // Constructor para crear un Modelo.DLC nuevo
     public DLC(Desarrollador desarrollador, String descripcion,
                String nombre, double pesoGB, double precio,
                Juego juego, TipoContenido contenido) {
@@ -17,18 +18,18 @@ public final class DLC extends Producto {
 
         if (juego == null) {
             throw new IllegalArgumentException(
-                    "El DLC debe estar asociado a un juego"
+                    "El Modelo.DLC debe estar asociado a un juego"
             );
         }
 
         if (!juego.agregarDlc(this)) {
             throw new IllegalArgumentException(
-                    "No se pudo asociar el DLC al juego"
+                    "No se pudo asociar el Modelo.DLC al juego"
             );
         }
     }
 
-    // Constructor para reconstruir un DLC desde MySQL
+    // Constructor para reconstruir un Modelo.DLC desde MySQL
     protected DLC(int id, Desarrollador desarrollador,
                   String descripcion, String nombre,
                   LocalDate fechaLanzamiento, double pesoGB,
@@ -42,13 +43,13 @@ public final class DLC extends Producto {
 
         if (juego == null) {
             throw new IllegalArgumentException(
-                    "El DLC debe estar asociado a un juego"
+                    "El Modelo.DLC debe estar asociado a un juego"
             );
         }
 
         if (!juego.agregarDlc(this)) {
             throw new IllegalArgumentException(
-                    "No se pudo asociar el DLC al juego"
+                    "No se pudo asociar el Modelo.DLC al juego"
             );
         }
     }
@@ -103,7 +104,7 @@ public final class DLC extends Producto {
         return juego;
     }
 
-    // Método interno utilizado por Juego para mantener
+    // Método interno utilizado por Modelo.Juego para mantener
     // sincronizada la relación en ambos objetos.
     void setJuego(Juego juego) {
         this.juego = juego;

@@ -1,3 +1,5 @@
+package Enum;
+
 public enum TipoContenido {
 
     EXPANSION("Contenido grande que amplia la historia, misiones y mecanicas principales."),

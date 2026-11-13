@@ -1,3 +1,5 @@
+package Enum;
+
 public enum GenerosJuegos {
 
     ACCION("Desafios fisicos basados en reflejos rapidos, velocidad y combate en tiempo real."),

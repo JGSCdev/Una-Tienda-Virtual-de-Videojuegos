@@ -1,3 +1,5 @@
+package Modelo;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -204,7 +206,7 @@ public abstract class Usuario {
 
     @Override
     public String toString() {
-        return "\n----------- Usuario ----------\n" +
+        return "\n----------- Modelo.Usuario ----------\n" +
                 "ID: " + id + '\n' +
                 "Username: " + username + '\n' +
                 "Email: " + email + '\n' +

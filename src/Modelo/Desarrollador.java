@@ -1,3 +1,4 @@
+package Modelo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -220,7 +221,7 @@ public final class Desarrollador extends Usuario {
         return true;
     }
 
-    // Modificar Juego
+    // Modificar Modelo.Juego
 
     public boolean modificarJuego(Juego juegoModificado) {
 
@@ -257,11 +258,11 @@ public final class Desarrollador extends Usuario {
             return false;
         }
 
-        // Atributos heredados de Producto
+        // Atributos heredados de Modelo.Producto
 
         aplicarDatosComunes(juegoActual, juegoModificado);
 
-        // Atributos propios de Juego
+        // Atributos propios de Modelo.Juego
 
         juegoActual.setGenero(juegoModificado.getGenero());
         juegoActual.setDuracion(juegoModificado.getDuracion());
@@ -272,7 +273,7 @@ public final class Desarrollador extends Usuario {
         return true;
     }
 
-    // Modificar DLC
+    // Modificar Modelo.DLC
 
     public boolean modificarDLC(DLC dlcModificado) {
 
@@ -300,24 +301,24 @@ public final class Desarrollador extends Usuario {
             return false;
         }
 
-        // Primero intentamos modificar la relación con el Juego.
+        // Primero intentamos modificar la relación con el Modelo.Juego.
 
         if (!dlcActual.cambiarJuego(dlcModificado.getJuego())) {
             return false;
         }
 
-        // Atributos heredados de Producto
+        // Atributos heredados de Modelo.Producto
 
         aplicarDatosComunes(dlcActual, dlcModificado);
 
-        // Atributos propios de DLC
+        // Atributos propios de Modelo.DLC
 
         dlcActual.setContenido(dlcModificado.getContenido());
 
         return true;
     }
 
-    // Modificar cualquier tipo de Producto
+    // Modificar cualquier tipo de Modelo.Producto
 
     public boolean modificarProducto(Producto productoModificado) {
 
