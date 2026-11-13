@@ -105,8 +105,13 @@ public abstract class Productos implements Comparable<Productos>{
 
     //comparator
     @Override
-    public int compareTo(Productos o) {
-        return this.id.compareTo(o.id);
+    public int compareTo(Productos otro) {
+
+        if (otro == null) {
+            throw new NullPointerException("El producto no puede ser null"); // si llega a ser null, el compare to va a lanzar una NullPointerException
+        }
+
+        return Integer.compare(this.getId(), otro.getId());
     }
 
     //equals y hashCode

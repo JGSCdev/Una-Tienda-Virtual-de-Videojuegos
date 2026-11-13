@@ -91,7 +91,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
             return false;
         }
 
-        if(productoModificado instanceof Juego)
+        if(productoModificado instanceof Juegos)
         {
 
             //necesito los setters de Juego
@@ -100,7 +100,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
 
         }
 
-        if(productoModificado instanceof DLC)
+        if(productoModificado instanceof DLCs)
         {
             //necesito los setters de DLC
 
@@ -122,12 +122,12 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
 
 
     @Override
-    public void darAltaJuego(Juego juego) {
+    public void darAltaJuego(Juegos juego) {
 
     }
 
     @Override
-    public void darAltaDLC(DLC dlc) {
+    public void darAltaDLC(DLCs dlc) {
 
     }
 
@@ -142,7 +142,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
     }
 
     @Override
-    public boolean modificarJuego(Juego juegoModificado) {
+    public boolean modificarJuego(Juegos juegoModificado) {
 
         if (juegoModificado == null) {
             return false;
@@ -150,7 +150,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
 
         Productos producto = buscarProductoPropio(juegoModificado.getId());
 
-        if (!(producto instanceof Juego)) {
+        if (!(producto instanceof Juegos)) {
             return false;
         }
 
@@ -160,7 +160,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
     }
 
     @Override
-    public boolean modificarDLC(DLC dlcModificado) {
+    public boolean modificarDLC(DLCs dlcModificado) {
 
         if (dlcModificado == null) {
             return false;
@@ -168,7 +168,7 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
 
         Productos producto = buscarProductoPropio(dlcModificado.getId());
 
-        if (!(producto instanceof DLC)) {
+        if (!(producto instanceof DLCs)) {
             return false;
         }
 
