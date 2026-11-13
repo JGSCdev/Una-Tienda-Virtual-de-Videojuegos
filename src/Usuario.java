@@ -191,14 +191,6 @@ public abstract class Usuario {
     }
 
 
-    public void darDeBaja() {
-        estado = false;
-    }
-
-    public void reactivar() {
-        estado = true;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Usuario usuario)) return false;
