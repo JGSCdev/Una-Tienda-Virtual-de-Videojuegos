@@ -23,27 +23,63 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
     public Cliente(int id, String username, String contrasenia, String email, boolean estado, LocalDateTime creacionCuenta, String descripcion, String nacionalidad, String nombre, String apellido, LocalDate fechaNacimiento, Set<Producto> biblioteca, double saldo, TreeSet<Cliente> amigos, double tiempoConectado, List<Producto> carrito, LocalDateTime fechaUltimaConexion) {
         super(id, username, contrasenia, email, estado, creacionCuenta, descripcion, nacionalidad, nombre, apellido, fechaNacimiento);
 
+        //biblioteca
         if (biblioteca == null) { // Verifica si se intenta poner una coleccion nula, esto se usa en todas las colecciones
+
             this.biblioteca = new HashSet<>(); // En ese caso le generara una coleccion vacia
+
         } else {
+
             this.biblioteca = new HashSet<>(biblioteca); // Si resulto que no es nula devuele la collecion completa
+
         }
 
-        this.saldo = saldo;
-
+        //lista de amigos agregados
         if (amigos == null) {
+
             this.amigos = new TreeSet<>();
+
         } else {
+
             this.amigos = new TreeSet<>(amigos);
+
         }
 
-        this.tiempoConectado = tiempoConectado;
+        //saldo
+
+        if (!Double.isFinite(saldo) || saldo < 0) {
+
+            throw new IllegalArgumentException("Saldo inválido");
+        }
+        else
+        {
+            this.saldo = saldo;
+        }
+
+        //tiempo conectado
+
+        if (!Double.isFinite(tiempoConectado) || tiempoConectado < 0) {
+
+            throw new IllegalArgumentException("Tiempo conectado inválido");
+
+        }
+        else
+        {
+            this.tiempoConectado = tiempoConectado;
+        }
+
+        //el carrito del cliente
 
         if (carrito == null) {
+
             this.carrito = new ArrayList<>();
+
         } else {
+
             this.carrito = new ArrayList<>(carrito);
         }
+
+        // fecha de su ultima coneccion a la tienda (y al sistema en general)
 
         if(fechaUltimaConexion == null)
         {
@@ -91,15 +127,14 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
 
 
 
-    public void setTiempoConectado(double tiempoConectado) {
-        if(tiempoConectado < 0) // si el tiempo es menor a cero no hace ningun cambio
-        {
+    public void setTiempoConectado(double tiempoConectado) { //este set sirve mas que nada para poder asignarle un tiempo especifico, por que ya hay un metodo que actualiza esta variable
+        if (!Double.isFinite(tiempoConectado) || tiempoConectado < 0) {
             return;
         }
         this.tiempoConectado = tiempoConectado;
     }
 
-    public void setFechaUltimaConexion(LocalDateTime fechaUltimaConexion) { //este set sirve mas que nada para poder asignarle un tiempo especifico, por que ya hay un metodo que actualiza esta variable
+    public void setFechaUltimaConexion(LocalDateTime fechaUltimaConexion) { //este set sirve mas que nada para poder asignarle una fecha en especifico, por que ya hay un metodo que actualiza esta variable
         if(fechaUltimaConexion == null)
         {
             return;
@@ -125,9 +160,11 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
 
         double precio = producto.getPrecio(); // se extrae el precio del producto
 
-        if (precio < 0 || saldo < precio) { // revisa si el precio es menor a cero o si el saldo del cliente es menor al precio del juego que quiere comprar
+        if (!Double.isFinite(precio) || precio < 0 || saldo < precio) { // revisa si el precio es menor a cero o si el saldo del cliente es menor al precio del juego que quiere comprar y tambien si el precio es finito
             return false;
         }
+
+
 
         if (!biblioteca.add(producto)) { // añade el juego a la biblioteca con el add del Set lo que significa que si se logro agregar el juego pasa este filtro, pero si ya estaba en la biblioteca no se descuenta el dinero
             return false;
@@ -159,38 +196,40 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
 
     public boolean agregarAmigo(Cliente amigo) {
 
-        if (amigo == null) {
+        if (amigo == null) { // primero revisa si el amigo es nulo
             return false;
         }
 
-        if (this.getId() <= 0 || amigo.getId() <= 0) {
+        if (this.getId() <= 0 || amigo.getId() <= 0) { // despues revisa si los ids son mayores a cero (sirve para detectar si el id no tiene asignado un id en la base de datos)
             return false;
         }
 
-        if (amigo.equals(this)) {
+        if (amigo.equals(this)) { // antes de terminar revisa si ese "amigo" no es el mismo
             return false;
         }
 
-        return amigos.add(amigo);
+        return amigos.add(amigo); // y ya la ultima validacion la hace el TreeSet
     }
 
     public boolean eliminarAmigo(Cliente amigo) {
 
-        if (amigo == null) {
+        if (amigo == null) { // primero revisa si el amigo es nulo
             return false;
         }
 
-        return amigos.remove(amigo);
+        return amigos.remove(amigo); // despues el TreeSet verifica si se pudo eliminar ese amigo
     }
 
-    public boolean agregarSaldo(double monto)
-    {
-        if(monto <= 0)
-        {
+    public boolean agregarSaldo(double monto) {
+        if (!Double.isFinite(monto) || monto <= 0) { // no agrega el saldo si es menor a cero o si el saldo que se quiere ingresar representa un NaN o un numero infinito
             return false;
         }
 
-        saldo = saldo + monto;
+        if (!Double.isFinite(saldo + monto)) { // despues revisa si la suma del saldo y el monto dan un numero infinito
+            return false;
+        }
+
+        saldo += monto;
         return true;
     }
 
@@ -199,11 +238,15 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
     }
 
     public void agregarTiempoConectado(double tiempoConectado) {
-        if(tiempoConectado < 0) // si el tiempo es menor a cero no hace ningun cambio
-        {
+        if (!Double.isFinite(tiempoConectado) || tiempoConectado < 0) { // no agrega el tiempo si es menor a cero o si el tiempo que se quiere ingresar representa un NaN o un numero infinito
             return;
         }
-        this.tiempoConectado += tiempoConectado; // suma el tiempo conectado al total de tiempo en general
+
+        if (!Double.isFinite(this.tiempoConectado + tiempoConectado)) { // revisa si la suma del tiempo conectado con el tiempo que se quiere agregar es un numero infinito
+            return;
+        }
+
+        this.tiempoConectado += tiempoConectado;
     }
 
 
@@ -212,9 +255,19 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
     public int compareTo(Cliente otro) {
 
         if (otro == null) {
-            throw new NullPointerException("El cliente no puede ser null");
+            throw new NullPointerException("El cliente no puede ser null"); // si llega a ser null, el compare to va a lanzar una NullPointerException
         }
 
         return Integer.compare(this.getId(), otro.getId());
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "Datos del Cliente " +
+                                    "\n-----------------------------\n" +
+                                    "Saldo disponible: " + saldo +
+                                    "\nTiempo Conectado: " + tiempoConectado +
+                                    "\nUltima Coneccion: " + fechaUltimaConexion +
+                                    "\n-----------------------------\n";
     }
 }
