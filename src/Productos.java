@@ -1,6 +1,4 @@
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public abstract class Productos implements Comparable<Productos>{

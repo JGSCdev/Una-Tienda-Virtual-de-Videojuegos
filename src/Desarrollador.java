@@ -2,7 +2,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public final class Desarrollador extends Usuario implements iControlJuegos {
+public final class Desarrollador extends Usuario  {
     private Set<Productos> catalogoPropio = new LinkedHashSet<>();
     private double ganancias = 0.0;
     private double valoracionGeneral = 0.0;
@@ -20,6 +20,15 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
             this.catalogoPropio = new LinkedHashSet<>();
         } else {
             this.catalogoPropio = new LinkedHashSet<>(catalogoPropio);
+        }
+
+        if (!Double.isFinite(ganancias) || ganancias < 0) {
+            throw new IllegalArgumentException("Ganancias inválidas");
+        }
+
+        if (!Double.isFinite(valoracionGeneral) ||
+                valoracionGeneral < 0 || valoracionGeneral > 5) {
+            throw new IllegalArgumentException("Valoración inválida");
         }
 
         this.ganancias = ganancias;
@@ -72,76 +81,38 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
 
     public boolean publicarProducto(Productos producto) {
 
-        if (producto == null) {
+        if (producto == null || !getEstado()) {
+            return false;
+        }
+
+        if (producto.getDesarrollador() != this) {
             return false;
         }
 
         return catalogoPropio.add(producto);
     }
 
-    public boolean modificarProducto(Productos productoModificado)
-    {
-        if (productoModificado == null) {
-            return false;
-        }
-
-        Productos aux = buscarProductoPropio(productoModificado.getId());
-
-        if (aux == null) {
-            return false;
-        }
-
-        if(productoModificado instanceof Juegos)
-        {
-
-            //necesito los setters de Juego
-
-            return true;
-
-        }
-
-        if(productoModificado instanceof DLCs)
-        {
-            //necesito los setters de DLC
-
-            return true;
-
-        }
-
-        return false;
-    }
-
     public boolean darDeBajaProducto(Productos producto) {
-        if (producto == null) return false;
 
-        if (!catalogoPropio.contains(producto)) return false;
+        if (producto == null) {
+            return false;
+        }
 
-        producto.darDeBaja();
+        Productos productoActual = buscarProductoPropio(producto.getId());
+
+        if (productoActual == null ||
+                productoActual.getClass() != producto.getClass()) {
+            return false;
+        }
+
+        productoActual.darDeBaja();
+
         return true;
     }
 
 
-    @Override
-    public void darAltaJuego(Juegos juego) {
 
-    }
 
-    @Override
-    public void darAltaDLC(DLCs dlc) {
-
-    }
-
-    @Override
-    public void DarBajaJuego(int id) {
-
-    }
-
-    @Override
-    public void DarBajaDLC(int id) {
-
-    }
-
-    @Override
     public boolean modificarJuego(Juegos juegoModificado) {
 
         if (juegoModificado == null) {
@@ -154,12 +125,31 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
             return false;
         }
 
-        //necesito los setters de Juego
+        Juegos juegoActual = (Juegos) producto;
+
+        // Atributos heredados de Productos
+        juegoActual.setNombre(juegoModificado.getNombre());
+        juegoActual.setDescripcion(juegoModificado.getDescripcion());
+        juegoActual.setPrecio(juegoModificado.getPrecio());
+        juegoActual.setPeso_GB(juegoModificado.getPeso_GB());
+        juegoActual.setFecha_Lanzamiento(juegoModificado.getFecha_Lanzamiento());
+
+        if (juegoModificado.isEstado()) {
+            juegoActual.darDeAlta();
+        } else {
+            juegoActual.darDeBaja();
+        }
+
+        // Atributos propios de Juegos
+        juegoActual.setGenero(juegoModificado.getGenero());
+        juegoActual.setDuracion(juegoModificado.getDuracion());
+        juegoActual.setEdadMinima(juegoModificado.getEdadMinima());
+        juegoActual.setRequisitosMinimos(juegoModificado.getRequisitosMinimos());
+        juegoActual.setRequisitosRecomendados(juegoModificado.getRequisitosRecomendados());
 
         return true;
     }
 
-    @Override
     public boolean modificarDLC(DLCs dlcModificado) {
 
         if (dlcModificado == null) {
@@ -172,8 +162,45 @@ public final class Desarrollador extends Usuario implements iControlJuegos {
             return false;
         }
 
-        //necesito los setters de DLC
+        DLCs dlcActual = (DLCs) producto;
+
+        // Atributos heredados
+        dlcActual.setNombre(dlcModificado.getNombre());
+        dlcActual.setDescripcion(dlcModificado.getDescripcion());
+        dlcActual.setPrecio(dlcModificado.getPrecio());
+        dlcActual.setPeso_GB(dlcModificado.getPeso_GB());
+        dlcActual.setFecha_Lanzamiento(dlcModificado.getFecha_Lanzamiento());
+
+        if (dlcModificado.isEstado()) {
+            dlcActual.darDeAlta();
+        } else {
+            dlcActual.darDeBaja();
+        }
+
+        // Atributos propios
+        dlcActual.setContenido(dlcModificado.getContenido());
+
+        // Relación con el juego
+        dlcActual.setJuego(dlcModificado.getJuego());
 
         return true;
     }
+
+    public boolean modificarProducto(Productos productoModificado) {
+
+        if (productoModificado == null) {
+            return false;
+        }
+
+        if (productoModificado instanceof Juegos juego) {
+            return modificarJuego(juego);
+        }
+
+        if (productoModificado instanceof DLCs dlc) {
+            return modificarDLC(dlc);
+        }
+
+        return false;
+    }
+
 }
