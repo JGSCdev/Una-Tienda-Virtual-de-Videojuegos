@@ -1,10 +1,10 @@
 public interface iControlJuegos {
 
-    public void darAltaJuego(Juegos juego);
-    public void darAltaDLC(DLCs dlc);
+    public void darAltaJuego(Juego juego);
+    public void darAltaDLC(DLC dlc);
     public void DarBajaJuego(int id);
     public void DarBajaDLC(int id);
-    public boolean modificarJuego(Juegos juego);
-    public boolean modificarDLC(DLCs dlc);
+    public boolean modificarJuego(Juego juego);
+    public boolean modificarDLC(DLC dlc);
 
 }
