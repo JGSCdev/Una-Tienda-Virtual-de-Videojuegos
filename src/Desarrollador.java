@@ -17,22 +17,30 @@ public final class Desarrollador extends Usuario  {
         super(id, username, contrasenia, email, estado, creacionCuenta, descripcion, nacionalidad, nombre, apellido, fechaNacimiento);
 
         if (catalogoPropio == null) {
+
             this.catalogoPropio = new LinkedHashSet<>();
+
         } else {
+
             this.catalogoPropio = new LinkedHashSet<>(catalogoPropio);
         }
 
         if (!Double.isFinite(ganancias) || ganancias < 0) {
             throw new IllegalArgumentException("Ganancias inválidas");
         }
+        else
+        {
+            this.ganancias = ganancias;
+        }
 
         if (!Double.isFinite(valoracionGeneral) ||
                 valoracionGeneral < 0 || valoracionGeneral > 5) {
             throw new IllegalArgumentException("Valoración inválida");
         }
-
-        this.ganancias = ganancias;
-        this.valoracionGeneral = valoracionGeneral;
+        else
+        {
+            this.valoracionGeneral = valoracionGeneral;
+        }
     }
 
     public Desarrollador() {
@@ -50,14 +58,14 @@ public final class Desarrollador extends Usuario  {
     }
 
     public void setGanancias(double ganancias) {
-        if (ganancias < 0) {
-            return;
+        if (!Double.isFinite(ganancias) || ganancias < 0) { // verifica si el numero es NaN o infinito o si el ingreso es menor a 0
+            throw new IllegalArgumentException("Ganancias inválidas");
         }
 
         this.ganancias = ganancias;
     }
 
-    public Double getValoracionGeneral() {
+    public double getValoracionGeneral() {
         return valoracionGeneral;
     }
 
