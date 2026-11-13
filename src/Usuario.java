@@ -62,6 +62,10 @@ public abstract class Usuario {
         return id;
     }
 
+    public void setId(int id)
+    {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
@@ -177,6 +181,15 @@ public abstract class Usuario {
         this.contrasenia = nueva;
         return true;
     }
+
+    public void darDeBaja() {
+        estado = false;
+    }
+
+    public void reactivar() {
+        estado = true;
+    }
+
 
     public void darDeBaja() {
         estado = false;
