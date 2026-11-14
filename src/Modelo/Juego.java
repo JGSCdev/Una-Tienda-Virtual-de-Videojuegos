@@ -32,7 +32,7 @@ public final class Juego extends Producto {
     }
 
     // Constructor para reconstruir un juego desde MySQL
-    protected Juego(int id, Desarrollador desarrollador,
+    public Juego(int id, Desarrollador desarrollador,
                     String descripcion, String nombre,
                     LocalDate fechaLanzamiento, double pesoGB,
                     double precio, boolean estado,

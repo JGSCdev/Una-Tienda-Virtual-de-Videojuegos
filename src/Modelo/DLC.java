@@ -30,7 +30,7 @@ public final class DLC extends Producto {
     }
 
     // Constructor para reconstruir un Modelo.DLC desde MySQL
-    protected DLC(int id, Desarrollador desarrollador,
+    public DLC(int id, Desarrollador desarrollador,
                   String descripcion, String nombre,
                   LocalDate fechaLanzamiento, double pesoGB,
                   double precio, boolean estado,

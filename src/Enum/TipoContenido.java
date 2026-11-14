@@ -17,7 +17,6 @@ public enum TipoContenido {
     }
 
     public String getDescriccion() {
-        return descriccion;
-    }
+        return descriccion;}
 
 }

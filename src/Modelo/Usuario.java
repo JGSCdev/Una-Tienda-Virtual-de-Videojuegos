@@ -60,6 +60,11 @@ public abstract class Usuario {
 
     //getters y setters
 
+
+    public String getContrasenia() { //-------------
+        return contrasenia;
+    }
+
     public int getId() {
         return id;
     }
@@ -67,6 +72,10 @@ public abstract class Usuario {
     public void setId(int id)
     {
         this.id = id;
+    }
+
+    public void setEstado(boolean estado) { //----------
+        this.estado = estado;
     }
 
     public String getUsername() {
