@@ -13,12 +13,12 @@ public final class Juego extends Producto {
     private int edadMinima;
     private String requisitosMinimos;
     private String requisitosRecomendados;
-    private Duration duracion;
+    private double duracion;
 
     // Constructor para crear un juego nuevo
     public Juego(Desarrollador desarrollador, String descripcion,
                  String nombre, double pesoGB, double precio,
-                 Duration duracion, int edadMinima,
+                 double duracion, int edadMinima,
                  GenerosJuegos genero, String requisitosMinimos,
                  String requisitosRecomendados) {
 
@@ -36,7 +36,7 @@ public final class Juego extends Producto {
                     String descripcion, String nombre,
                     LocalDate fechaLanzamiento, double pesoGB,
                     double precio, boolean estado,
-                    Duration duracion, int edadMinima,
+                    double duracion, int edadMinima,
                     GenerosJuegos genero, String requisitosMinimos,
                     String requisitosRecomendados, List<DLC> dlCs) {
 
@@ -154,13 +154,13 @@ public final class Juego extends Producto {
         this.requisitosRecomendados = requisitosRecomendados;
     }
 
-    public Duration getDuracion() {
+    public double getDuracion() {
         return duracion;
     }
 
-    public void setDuracion(Duration duracion) {
+    public void setDuracion(double duracion) {
 
-        if (duracion == null || duracion.isNegative() || duracion.isZero()) {
+        if (duracion <= 0) {
             throw new IllegalArgumentException("Duración inválida");
         }
 

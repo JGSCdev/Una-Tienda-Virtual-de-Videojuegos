@@ -265,7 +265,7 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
 
     @Override
     public String toString() {
-        return super.toString() + "Datos del Modelo.Cliente " +
+        return super.toString() + "Datos del Cliente " +
                                     "\n-----------------------------\n" +
                                     "Saldo disponible: " + saldo +
                                     "\nTiempo Conectado: " + tiempoConectado +
