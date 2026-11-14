@@ -7,11 +7,8 @@ import Excepciones.UsuarioServiceException;
 import Modelo.Cliente;
 import Modelo.Producto;
 import Persistencia.ClienteDAO;
-
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+
 
 public class ClienteService {
 
