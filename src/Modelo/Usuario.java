@@ -168,6 +168,17 @@ public abstract class Usuario {
         return true;
     }
 
+
+    public boolean restablecerContrasenia(String nueva) {
+        if (!validarContraseniaNueva(nueva)) { //valida la contraseña nueva
+            return false;
+        }
+
+        this.contrasenia = nueva; // Establece una nueva contraseña
+        return true;
+    }
+
+
     public boolean cambiarContrasenia(String actual, String nueva) {
         if (!estado) { //primero se fija si esta activa la cuenta
             return false;

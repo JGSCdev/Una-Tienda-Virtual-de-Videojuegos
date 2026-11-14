@@ -1,18 +1,19 @@
+
 package Modelo;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Gestores  {
-
+public abstract class  Gestores {
 
     private String contrasenia;
     private String pin;
-    private Map<String, Usuario> listaUsuarios = new HashMap<>();
 
+    // Es static para que Administrador y Soporte compartan la misma lista de usuarios
+    private static Map<Integer, Usuario> listaUsuarios = new HashMap<>();
 
-    public Gestores(String contrasenia, String pin)
-    {
+    public Gestores(String contrasenia, String pin) {
         this.contrasenia = contrasenia;
         this.pin = pin;
     }
@@ -28,82 +29,79 @@ public class Gestores  {
         return pin;
     }
 
-    public Map<String, Usuario> getListaUsuarios() {
-        return listaUsuarios;
+    public Map<Integer, Usuario> getListaUsuarios() {
+        // Devuelve una vista no modificable para impedir que otras clases alteren directamente la colección
+        return Collections.unmodifiableMap(listaUsuarios);
     }
-
-
 
     //-------------------------------------METODOS---------------------------------------------------
 
+    public static void agregarUsuario(Usuario usuario) {
 
-    //queda como posible fururo metodo privado en el que agregar cosas a la lisa, o no
-
-    /*
-    public void agregarUsuario(Modelo.Usuario Modelo.Usuario)
-    {
-        if (Modelo.Usuario != null) // Si la Modelo.Usuario no es null
-        {
-            listaUsuarios.put(Modelo.Usuario.getId(), Modelo.Usuario); // Guarda el objeto usando su ID como clave
+        if (usuario == null) { // Comprueba que el objeto recibido no sea nulo
+            throw new IllegalArgumentException("El usuario no puede ser null");
         }
-    }
-*/
 
+        int id = usuario.getId(); // Obtiene el ID del usuario
 
-    public Usuario buscarUsuarioPorID(String id)
-    {
-        return listaUsuarios.get(id); // get(id) devuelve el objeto Modelo.Usuario asociado a esa clave
-    }
-
-
-    public void modificarUsuario(String id, String username, String email)
-    {
-        Usuario Usuario = buscarUsuarioPorID(id); // Busca la Modelo.Usuario
-
-        if (Usuario != null) {
-            Usuario.setUsername(username);
-            Usuario.setEmail(email);
+        if (id <= 0) { // Comprueba que el usuario tenga un ID válido
+            throw new IllegalArgumentException("El usuario debe tener un ID válido");
         }
-        // Si existe, utiliza sus setters para modificar
-        // sus atributos
-    }
 
-
-    public void darBajaUsuario(String id)
-    {
-        Usuario Usuario = buscarUsuarioPorID(id); // Primero comprueba que la Modelo.Usuario exista
-
-        if (Usuario != null && Usuario.getEstado()) // Después verifica que esté activa
-        {
-            Usuario.darDeBaja(); // desactiva la Modelo.Usuario buscada
+        if (listaUsuarios.containsKey(id)) { // Verifica que no exista otro usuario con el mismo ID
+            throw new IllegalArgumentException("El usuario ya existe");
         }
+
+        listaUsuarios.put(id, usuario); // Agrega el usuario al mapa
     }
 
-
-    public String restablecerContrasenia(Usuario Usuario, String nuevaContrasenia)
-    {
-
-        //ver
-        return "";
+    public static Usuario buscarUsuarioPorID(int id) {
+        // get(id) devuelve el usuario asociado a esa clave
+        return listaUsuarios.get(id);
     }
 
-    public void reactivarUsuario(String id)
-    {
-        Usuario Usuario = buscarUsuarioPorID(id); // Busca la Modelo.Usuario por su ID
+    public void modificarUsuario(int id, String username, String email) {
 
-        if (Usuario != null && !Usuario.getEstado())  //Comprueba que exista
-        {
-            Usuario.reactivar();
+        Usuario usuario = buscarUsuarioPorID(id); // Busca al usuario mediante su ID
+
+        if (usuario == null) { // Comprueba que el usuario exista
+            throw new IllegalArgumentException("No existe un usuario con ese ID");
+        }
+
+        // Los setters de Usuario validan el nombre y el email
+        usuario.setUsername(username);
+        usuario.setEmail(email);
+    }
+
+    public void darBajaUsuario(int id) {
+
+        Usuario usuario = buscarUsuarioPorID(id); // Busca al usuario que se quiere dar de baja
+
+        if (usuario != null && usuario.getEstado()) { // Comprueba que exista y que su cuenta esté activa
+            usuario.darDeBaja(); // Realiza una baja lógica
         }
     }
 
+    public boolean restablecerContrasenia(int id, String nuevaContrasenia) {
 
-    @Override
-    public String toString() {
-        return "Modelo.Gestores{" +
-                "contrasenia='" + contrasenia + '\'' +
-                ", pin='" + pin + '\'' +
-                ", listaUsuarios=" + listaUsuarios +
-                '}';
+        Usuario usuario = buscarUsuarioPorID(id); // Busca al usuario cuya contraseña se quiere restablecer
+
+        if (usuario == null) { // Si no existe, no se puede realizar el restablecimiento
+            return false;
+        }
+
+        // Delega a Usuario la validación de la contraseña nueva y el cambio correspondiente
+        return usuario.restablecerContrasenia(nuevaContrasenia);
     }
+
+    public void reactivarUsuario(int id) {
+
+        Usuario usuario = buscarUsuarioPorID(id); // Busca al usuario que se quiere reactivar
+
+        if (usuario != null && !usuario.getEstado()) { // Comprueba que exista y que la cuenta esté inactiva
+            usuario.reactivar(); // Cambia el estado a true
+        }
+    }
+
+
 }
