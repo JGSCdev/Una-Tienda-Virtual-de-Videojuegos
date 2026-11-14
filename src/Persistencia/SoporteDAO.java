@@ -1,4 +1,4 @@
-package DAO;
+package Persistencia;
 import Conexion.Conexion;
 
 import java.sql.Connection;
