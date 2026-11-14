@@ -5,11 +5,16 @@ import Modelo.Juego;
 
 public interface iControlJuegos {
 
-    public void darAltaJuego(Juego juego);
-    public void darAltaDLC(DLC dlc);
-    public void DarBajaJuego(int id);
-    public void DarBajaDLC(int id);
+    public boolean darAltaJuego(Juego juego);
+    public boolean darAltaDLC(DLC dlc);
+
+    public boolean darBajaJuego(int id);
+    public boolean darBajaDLC(int id);
+
     public boolean modificarJuego(Juego juego);
     public boolean modificarDLC(DLC dlc);
+
+
+
 
 }

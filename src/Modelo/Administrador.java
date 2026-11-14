@@ -1,7 +1,7 @@
 package Modelo;
 import Interfaces.iControlJuegos;
 
-public class Administrador extends Gestores implements iControlJuegos {
+public final class Administrador extends Gestores implements iControlJuegos {
 
     public Administrador(String contrasenia, String pin) {
         super(contrasenia, pin);
@@ -19,22 +19,22 @@ public class Administrador extends Gestores implements iControlJuegos {
     }
 
     @Override
-    public void darAltaJuego(Juego juego) {
+    public boolean darAltaJuego(Juego juego) {
 
     }
 
     @Override
-    public void darAltaDLC(DLC dlc) {
+    public boolean darAltaDLC(DLC dlc) {
 
     }
 
     @Override
-    public void DarBajaJuego(int id) {
+    public boolean darBajaJuego(int id) {
 
     }
 
     @Override
-    public void DarBajaDLC(int id) {
+    public boolean darBajaDLC(int id) {
 
     }
 
