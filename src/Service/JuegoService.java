@@ -1,6 +1,6 @@
 package Service;
 
-import Modelo.Productos.Juego;
+import Modelo.Juego;
 import Persistencia.JuegoDAO;
 
 import java.util.List;

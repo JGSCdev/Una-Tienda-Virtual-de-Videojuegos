@@ -1,4 +1,4 @@
-package Modelo.Cuentas;
+package Modelo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,11 +40,11 @@ public class Gestores  {
     //queda como posible fururo metodo privado en el que agregar cosas a la lisa, o no
 
     /*
-    public void agregarUsuario(Modelo.Cuentas.Usuario Modelo.Cuentas.Usuario)
+    public void agregarUsuario(Modelo.Usuario Modelo.Usuario)
     {
-        if (Modelo.Cuentas.Usuario != null) // Si la Modelo.Cuentas.Usuario no es null
+        if (Modelo.Usuario != null) // Si la Modelo.Usuario no es null
         {
-            listaUsuarios.put(Modelo.Cuentas.Usuario.getId(), Modelo.Cuentas.Usuario); // Guarda el objeto usando su ID como clave
+            listaUsuarios.put(Modelo.Usuario.getId(), Modelo.Usuario); // Guarda el objeto usando su ID como clave
         }
     }
 */
@@ -52,13 +52,13 @@ public class Gestores  {
 
     public Usuario buscarUsuarioPorID(String id)
     {
-        return listaUsuarios.get(id); // get(id) devuelve el objeto Modelo.Cuentas.Usuario asociado a esa clave
+        return listaUsuarios.get(id); // get(id) devuelve el objeto Modelo.Usuario asociado a esa clave
     }
 
 
     public void modificarUsuario(String id, String username, String email)
     {
-        Usuario Usuario = buscarUsuarioPorID(id); // Busca la Modelo.Cuentas.Usuario
+        Usuario Usuario = buscarUsuarioPorID(id); // Busca la Modelo.Usuario
 
         if (Usuario != null) {
             Usuario.setUsername(username);
@@ -71,11 +71,11 @@ public class Gestores  {
 
     public void darBajaUsuario(String id)
     {
-        Usuario Usuario = buscarUsuarioPorID(id); // Primero comprueba que la Modelo.Cuentas.Usuario exista
+        Usuario Usuario = buscarUsuarioPorID(id); // Primero comprueba que la Modelo.Usuario exista
 
         if (Usuario != null && Usuario.getEstado()) // Después verifica que esté activa
         {
-            Usuario.darDeBaja(); // desactiva la Modelo.Cuentas.Usuario buscada
+            Usuario.darDeBaja(); // desactiva la Modelo.Usuario buscada
         }
     }
 
@@ -89,7 +89,7 @@ public class Gestores  {
 
     public void reactivarUsuario(String id)
     {
-        Usuario Usuario = buscarUsuarioPorID(id); // Busca la Modelo.Cuentas.Usuario por su ID
+        Usuario Usuario = buscarUsuarioPorID(id); // Busca la Modelo.Usuario por su ID
 
         if (Usuario != null && !Usuario.getEstado())  //Comprueba que exista
         {
@@ -100,7 +100,7 @@ public class Gestores  {
 
     @Override
     public String toString() {
-        return "Modelo.Cuentas.Gestores{" +
+        return "Modelo.Gestores{" +
                 "contrasenia='" + contrasenia + '\'' +
                 ", pin='" + pin + '\'' +
                 ", listaUsuarios=" + listaUsuarios +

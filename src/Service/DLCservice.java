@@ -1,6 +1,6 @@
 package Service;
 
-import Modelo.Productos.DLC;
+import Modelo.DLC;
 import Persistencia.DLCdao;
 
 import java.util.List;

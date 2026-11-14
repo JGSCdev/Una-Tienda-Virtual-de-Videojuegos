@@ -1,9 +1,9 @@
 package Persistencia;
 
 import Conexion.Conexion;
-import Modelo.Cuentas.Desarrollador;
-import Modelo.Productos.DLC;
-import Modelo.Productos.Juego;
+import Modelo.Desarrollador;
+import Modelo.DLC;
+import Modelo.Juego;
 import Enum.GenerosJuegos;
 
 import java.sql.*;
