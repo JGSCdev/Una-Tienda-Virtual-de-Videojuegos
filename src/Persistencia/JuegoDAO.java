@@ -55,7 +55,7 @@ public class JuegoDAO {
         return false;
     }
 
-    private boolean cambiarEstado(int id, boolean estado) {
+    public boolean cambiarEstado(int id, boolean estado) {
         String sql = "UPDATE juego SET estado = ? WHERE id = ?";
         try (Connection conn = Conexion.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -139,6 +139,36 @@ public class JuegoDAO {
             System.err.println("Error al mostrar juegos: " + e.getMessage());
         }
         return lista;
+    }
+
+    public boolean modificar(Juego juego) {
+        if (juego == null || juego.getId() <= 0) {
+            return false;
+        }
+        String sql = "UPDATE juego SET nombre = ?, precio = ?, descripcion = ?, fecha_lanzamiento = ?, peso_gb = ?, desarrollador_id = ?, estado = ?, genero = ?, edad_minima = ?, requisitos_minimos = ?, requisitos_recomendados = ?, duracion = ? WHERE id = ?";
+
+        try (Connection conn = Conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, juego.getNombre());
+            ps.setDouble(2, juego.getPrecio());
+            ps.setString(3, juego.getDescripcion());
+            ps.setDate(4, Date.valueOf(juego.getFechaLanzamiento()));
+            ps.setDouble(5, juego.getPesoGB());
+            ps.setInt(6, juego.getDesarrollador().getId());
+            ps.setBoolean(7, juego.isEstado());
+            ps.setString(8, juego.getGenero().name());
+            ps.setInt(9, juego.getEdadMinima());
+            ps.setString(10, juego.getRequisitosMinimos());
+            ps.setString(11, juego.getRequisitosRecomendados());
+            ps.setDouble(12, juego.getDuracion());
+            ps.setInt(13, juego.getId());
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al modificar juego: " + e.getMessage());
+            return false;
+        }
     }
 
 }
