@@ -1,4 +1,4 @@
-package Modelo;
+package Modelo.Cuentas;
 
 import java.util.ArrayList;
 import java.util.Collections;

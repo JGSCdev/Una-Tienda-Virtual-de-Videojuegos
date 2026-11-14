@@ -1,6 +1,7 @@
-package Modelo;
+package Modelo.Productos;
 import Enum.GenerosJuegos;
-import java.time.Duration;
+import Modelo.Cuentas.Desarrollador;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,13 +33,13 @@ public final class Juego extends Producto {
     }
 
     // Constructor para reconstruir un juego desde MySQL
-    protected Juego(int id, Desarrollador desarrollador,
-                    String descripcion, String nombre,
-                    LocalDate fechaLanzamiento, double pesoGB,
-                    double precio, boolean estado,
-                    double duracion, int edadMinima,
-                    GenerosJuegos genero, String requisitosMinimos,
-                    String requisitosRecomendados, List<DLC> dlCs) {
+    public Juego(int id, Desarrollador desarrollador,
+                 String descripcion, String nombre,
+                 LocalDate fechaLanzamiento, double pesoGB,
+                 double precio, boolean estado,
+                 double duracion, int edadMinima,
+                 GenerosJuegos genero, String requisitosMinimos,
+                 String requisitosRecomendados, List<DLC> dlCs) {
 
         super(id, desarrollador, descripcion, nombre,
                 fechaLanzamiento, pesoGB, precio, estado);
@@ -53,7 +54,7 @@ public final class Juego extends Producto {
             for (DLC dlc : dlCs) {
                 if (!agregarDlc(dlc)) {
                     throw new IllegalArgumentException(
-                            "No se pudo asociar un Modelo.DLC al juego"
+                            "No se pudo asociar un Modelo.Productos.DLC al juego"
                     );
                 }
             }
@@ -68,7 +69,7 @@ public final class Juego extends Producto {
         }
     }
 
-    // Métodos para administrar los Modelo.DLC
+    // Métodos para administrar los Modelo.Productos.DLC
 
     public boolean agregarDlc(DLC dlc) {
 
@@ -76,7 +77,7 @@ public final class Juego extends Producto {
             return false;
         }
 
-        // Un Modelo.DLC no puede pertenecer a dos juegos diferentes
+        // Un Modelo.Productos.DLC no puede pertenecer a dos juegos diferentes
         if (dlc.getJuego() != null && dlc.getJuego() != this) {
             return false;
         }
