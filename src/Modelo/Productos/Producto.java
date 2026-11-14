@@ -1,4 +1,6 @@
-package Modelo;
+package Modelo.Productos;
+
+import Modelo.Cuentas.Desarrollador;
 
 import java.time.LocalDate;
 import java.util.Objects;

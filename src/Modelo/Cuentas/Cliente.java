@@ -1,4 +1,6 @@
-package Modelo;
+package Modelo.Cuentas;
+
+import Modelo.Productos.Producto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

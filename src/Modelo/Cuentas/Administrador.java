@@ -1,5 +1,7 @@
-package Modelo;
+package Modelo.Cuentas;
 import Interfaces.iControlJuegos;
+import Modelo.Productos.DLC;
+import Modelo.Productos.Juego;
 
 public final class Administrador extends Gestores implements iControlJuegos {
 
