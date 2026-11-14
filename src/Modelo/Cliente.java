@@ -106,6 +106,18 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
         return Collections.unmodifiableSet(biblioteca); // aca devuelve una coleccion que no puede ser modificada por la clase que llame a este getter, lo que no crea una copia. Es una vista no modificable de la colección original.
     }
 
+    public void setBiblioteca(Set<Producto> biblioteca) { // esto se va a usar mas que nada en la clase DAO
+        if (biblioteca == null) { // Verifica si se intenta poner una coleccion nula
+
+            this.biblioteca = new HashSet<>(); // En ese caso le generara una coleccion vacia
+
+        } else {
+
+            this.biblioteca = new HashSet<>(biblioteca); // Si resulto que no es nula devuele la collecion completa
+
+        }
+    }
+
     public double getSaldo() {
         return saldo;
     }
@@ -115,12 +127,35 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
         return Collections.unmodifiableSortedSet(amigos);// aca devuelve una coleccion que no puede ser modificada por la clase que llame a este getter
     }
 
+    public void setAmigos(TreeSet<Cliente> amigos) { // esto se va a usar mas que nada en la clase DAO
+        if (amigos == null) {// Verifica si se intenta poner una coleccion nula
+
+            this.amigos = new TreeSet<>(); // En ese caso le generara una coleccion vacia
+
+        } else {
+
+            this.amigos = new TreeSet<>(amigos); // Si resulto que no es nula devuele la collecion completa
+
+        }
+    }
+
     public double getTiempoConectado() {
         return tiempoConectado;
     }
 
     public List<Producto> getCarrito() {
         return Collections.unmodifiableList(carrito);// aca devuelve una coleccion que no puede ser modificada por la clase que llame a este getter
+    }
+
+    public void setCarrito(List<Producto> carrito) { // esto se va a usar mas que nada en la clase DAO
+        if (carrito == null) {// Verifica si se intenta poner una coleccion nula
+
+            this.carrito = new ArrayList<>(); // En ese caso le generara una coleccion vacia
+
+        } else {
+
+            this.carrito = new ArrayList<>(carrito); // Si resulto que no es nula devuele la collecion completa
+        }
     }
 
     public LocalDateTime getFechaUltimaConexion() {
