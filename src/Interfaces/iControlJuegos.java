@@ -1,7 +1,7 @@
 package Interfaces;
 
-import Modelo.Productos.DLC;
-import Modelo.Productos.Juego;
+import Modelo.DLC;
+import Modelo.Juego;
 
 public interface iControlJuegos {
 

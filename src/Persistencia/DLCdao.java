@@ -1,9 +1,9 @@
 package Persistencia;
 
 import Conexion.Conexion;
-import Modelo.Cuentas.Desarrollador;
-import Modelo.Productos.DLC;
-import Modelo.Productos.Juego;
+import Modelo.Desarrollador;
+import Modelo.DLC;
+import Modelo.Juego;
 import Enum.TipoContenido;
 
 import java.sql.*;
@@ -46,7 +46,7 @@ public class DLCdao {
         return false;
     }
 
-    private boolean cambiarEstado(int id, boolean estado) {
+    public boolean cambiarEstado(int id, boolean estado) {
         String sql = "UPDATE dlc SET estado = ? WHERE id = ?";
         try (Connection conn = Conexion.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -122,6 +122,33 @@ public class DLCdao {
             System.err.println("Error al buscar DLC por ID: " + e.getMessage());
         }
         return null;
+    }
+
+    public boolean modificar(DLC dlc) {
+        if (dlc == null || dlc.getId() <= 0) {
+            return false;
+        }
+        String sql = "UPDATE dlc SET nombre = ?, precio = ?, descripcion = ?, fecha_lanzamiento = ?, peso_gb = ?, desarrollador_id = ?, estado = ?, juego_id = ?, contenido = ? WHERE id = ?";
+
+        try (Connection conn = Conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, dlc.getNombre());
+            ps.setDouble(2, dlc.getPrecio());
+            ps.setString(3, dlc.getDescripcion());
+            ps.setDate(4, Date.valueOf(dlc.getFechaLanzamiento()));
+            ps.setDouble(5, dlc.getPesoGB());
+            ps.setInt(6, dlc.getDesarrollador().getId());
+            ps.setBoolean(7, dlc.isEstado());
+            ps.setInt(8, dlc.getJuego().getId());
+            ps.setString(9, dlc.getContenido().name());
+            ps.setInt(10, dlc.getId());
+
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al modificar DLC: " + e.getMessage());
+            return false;
+        }
     }
 
 }
