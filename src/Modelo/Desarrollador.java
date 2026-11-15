@@ -19,7 +19,6 @@ public final class Desarrollador extends Usuario {
     // Constructor para crear un desarrollador nuevo.
     // Los atributos generales de la cuenta se inicializan mediante Usuario.
     public Desarrollador(String username, String contrasenia, String email, String nacionalidad, String nombre, String apellido, LocalDate fechaNacimiento) {
-
         super(username, contrasenia, email, nacionalidad, nombre, apellido, fechaNacimiento);
     }
 
@@ -302,8 +301,8 @@ public final class Desarrollador extends Usuario {
                 juegoModificado.getRequisitosRecomendados() == null || juegoModificado.getRequisitosRecomendados().isBlank() ||
 
                 // La duración no debe ser un número infinito o desconocido pero positivo.
-                !Double.isFinite(duracion) || duracion <= 0) {
-
+                !Double.isFinite(duracion) || duracion <= 0)
+        {
             return false;
         }
 

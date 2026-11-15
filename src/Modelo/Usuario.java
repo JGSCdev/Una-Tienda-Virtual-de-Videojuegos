@@ -26,8 +26,20 @@ public abstract class Usuario {
         if (email == null || email.isBlank()) { // verifica si el email ingresado es null o tiene espacios
             throw new IllegalArgumentException("El email no puede estar vacio");
         }
-        if (!cumpleRequisitosContrasenia(contrasenia)) { //verifica si la constraseña cumple con los requisitos
+        if (!cumpleRequisitosContrasenia(contrasenia)) { // verifica si la contraseña cumple con los requisitos
             throw new IllegalArgumentException("La contrasenia debe tener al menos 10 caracteres y no contener espacios");
+        }
+        if (nacionalidad == null || nacionalidad.isBlank()) { // verifica que la nacionalidad no esté vacía
+            throw new IllegalArgumentException("La nacionalidad no puede estar vacia");
+        }
+        if (nombre == null || nombre.isBlank()) { // verifica que el nombre no esté vacío
+            throw new IllegalArgumentException("El nombre no puede estar vacio");
+        }
+        if (apellido == null || apellido.isBlank()) { // verifica que el apellido no esté vacío
+            throw new IllegalArgumentException("El apellido no puede estar vacio");
+        }
+        if (fechaNacimiento == null || fechaNacimiento.isAfter(LocalDate.now())) { // verifica que la fecha no sea nula ni en el futuro
+            throw new IllegalArgumentException("La fecha de nacimiento no es valida");
         }
 
         this.username = username;
@@ -41,6 +53,28 @@ public abstract class Usuario {
     }
 
     public Usuario(int id, String username, String contrasenia, String email, boolean estado, LocalDateTime creacionCuenta, String descripcion, String nacionalidad, String nombre, String apellido, LocalDate fechaNacimiento) {
+        if (username == null || username.isBlank()) { // verifica si el username ingresado es null o tiene espacios
+            throw new IllegalArgumentException("El usuario no puede estar vacio");
+        }
+        if (email == null || email.isBlank()) { // verifica si el email ingresado es null o tiene espacios
+            throw new IllegalArgumentException("El email no puede estar vacio");
+        }
+        if (!cumpleRequisitosContrasenia(contrasenia)) { // verifica si la contraseña cumple con los requisitos
+            throw new IllegalArgumentException("La contrasenia debe tener al menos 10 caracteres y no contener espacios");
+        }
+        if (nacionalidad == null || nacionalidad.isBlank()) { // verifica que la nacionalidad no esté vacía
+            throw new IllegalArgumentException("La nacionalidad no puede estar vacia");
+        }
+        if (nombre == null || nombre.isBlank()) { // verifica que el nombre no esté vacío
+            throw new IllegalArgumentException("El nombre no puede estar vacio");
+        }
+        if (apellido == null || apellido.isBlank()) { // verifica que el apellido no esté vacío
+            throw new IllegalArgumentException("El apellido no puede estar vacio");
+        }
+        if (fechaNacimiento == null || fechaNacimiento.isAfter(LocalDate.now())) { // verifica que la fecha no sea nula ni en el futuro
+            throw new IllegalArgumentException("La fecha de nacimiento no es valida");
+        }
+
         this.id = id;
         this.username = username;
         this.contrasenia = contrasenia;
@@ -226,7 +260,7 @@ public abstract class Usuario {
 
     @Override
     public String toString() {
-        return "\n----------- Modelo.Usuario ----------\n" +
+        return "\n----------- Usuario ----------\n" +
                 "ID: " + id + '\n' +
                 "Username: " + username + '\n' +
                 "Email: " + email + '\n' +

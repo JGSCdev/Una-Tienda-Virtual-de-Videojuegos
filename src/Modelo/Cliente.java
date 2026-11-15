@@ -94,6 +94,7 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
     }
 
     public Cliente() {
+        super();
         this.biblioteca = new HashSet<>();
         this.amigos = new TreeSet<>();
         this.carrito = new ArrayList<>();
@@ -209,7 +210,7 @@ public class Cliente extends Usuario implements Comparable<Cliente>{
 
         saldo -= precio; // si el juego logro pasar todos los filtros se le descuenta dinero del saldo
 
-        if(carrito.contains(producto)) // si es que estaba en carrito, lo elimina del carrito para
+        if(carrito.contains(producto)) // si es que estaba en carrito, lo elimina
         {
             eliminarDelCarrito(producto);
         }

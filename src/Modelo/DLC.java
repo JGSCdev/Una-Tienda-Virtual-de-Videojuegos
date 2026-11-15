@@ -8,49 +8,34 @@ public final class DLC extends Producto {
     private TipoContenido contenido;
 
     // Constructor para crear un Modelo.DLC nuevo
-    public DLC(Desarrollador desarrollador, String descripcion,
-               String nombre, double pesoGB, double precio,
-               Juego juego, TipoContenido contenido) {
+    public DLC(Desarrollador desarrollador, String descripcion,String nombre, double pesoGB, double precio, Juego juego, TipoContenido contenido) {
 
         super(desarrollador, descripcion, nombre, pesoGB, precio);
 
         setContenido(contenido);
 
         if (juego == null) {
-            throw new IllegalArgumentException(
-                    "El Modelo.DLC debe estar asociado a un juego"
-            );
+            throw new IllegalArgumentException("El DLC debe estar asociado a un juego");
         }
 
         if (!juego.agregarDlc(this)) {
-            throw new IllegalArgumentException(
-                    "No se pudo asociar el Modelo.DLC al juego"
-            );
+            throw new IllegalArgumentException("No se pudo asociar el DLC al juego");
         }
     }
 
-    // Constructor para reconstruir un Modelo.DLC desde MySQL
-    public DLC(int id, Desarrollador desarrollador,
-                  String descripcion, String nombre,
-                  LocalDate fechaLanzamiento, double pesoGB,
-                  double precio, boolean estado,
-                  Juego juego, TipoContenido contenido) {
+    // Constructor para reconstruir un DLC desde la BD
+    public DLC(int id, Desarrollador desarrollador, String descripcion, String nombre, LocalDate fechaLanzamiento, double pesoGB, double precio, boolean estado, Juego juego, TipoContenido contenido) {
 
-        super(id, desarrollador, descripcion, nombre,
-                fechaLanzamiento, pesoGB, precio, estado);
+        super(id, desarrollador, descripcion, nombre, fechaLanzamiento, pesoGB, precio, estado);
 
         setContenido(contenido);
 
         if (juego == null) {
-            throw new IllegalArgumentException(
-                    "El Modelo.DLC debe estar asociado a un juego"
-            );
+            throw new IllegalArgumentException("El DLC debe estar asociado a un juego");
         }
 
         if (!juego.agregarDlc(this)) {
-            throw new IllegalArgumentException(
-                    "No se pudo asociar el Modelo.DLC al juego"
-            );
+            throw new IllegalArgumentException("No se pudo asociar el DLC al juego");
         }
     }
 
@@ -92,9 +77,7 @@ public final class DLC extends Producto {
     public void setContenido(TipoContenido contenido) {
 
         if (contenido == null) {
-            throw new IllegalArgumentException(
-                    "El contenido no puede ser null"
-            );
+            throw new IllegalArgumentException("El contenido no puede ser null");
         }
 
         this.contenido = contenido;
@@ -104,7 +87,7 @@ public final class DLC extends Producto {
         return juego;
     }
 
-    // Método interno utilizado por Modelo.Juego para mantener
+    // Metodo interno utilizado por Juego para mantener
     // sincronizada la relación en ambos objetos.
     void setJuego(Juego juego) {
         this.juego = juego;

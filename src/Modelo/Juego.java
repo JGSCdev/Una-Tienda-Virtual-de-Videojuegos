@@ -31,14 +31,8 @@ public final class Juego extends Producto {
         setRequisitosRecomendados(requisitosRecomendados);
     }
 
-    // Constructor para reconstruir un juego desde MySQL
-    public Juego(int id, Desarrollador desarrollador,
-                    String descripcion, String nombre,
-                    LocalDate fechaLanzamiento, double pesoGB,
-                    double precio, boolean estado,
-                    double duracion, int edadMinima,
-                    GenerosJuegos genero, String requisitosMinimos,
-                    String requisitosRecomendados, List<DLC> dlCs) {
+    // Constructor para reconstruir un juego desde la BD
+    public Juego(int id, Desarrollador desarrollador, String descripcion, String nombre, LocalDate fechaLanzamiento, double pesoGB, double precio, boolean estado, double duracion, int edadMinima, GenerosJuegos genero, String requisitosMinimos, String requisitosRecomendados, List<DLC> dlCs) {
 
         super(id, desarrollador, descripcion, nombre,
                 fechaLanzamiento, pesoGB, precio, estado);
@@ -53,22 +47,15 @@ public final class Juego extends Producto {
             for (DLC dlc : dlCs) {
                 if (!agregarDlc(dlc)) {
                     throw new IllegalArgumentException(
-                            "No se pudo asociar un Modelo.DLC al juego"
+                            "No se pudo asociar un DLC al juego"
                     );
                 }
             }
         }
     }
 
-    // Métodos de validación
 
-    private void validarTexto(String texto, String atributo) {
-        if (texto == null || texto.isBlank()) {
-            throw new IllegalArgumentException(atributo + " inválido");
-        }
-    }
-
-    // Métodos para administrar los Modelo.DLC
+    // Métodos para administrar los DLC
 
     public boolean agregarDlc(DLC dlc) {
 
@@ -76,7 +63,7 @@ public final class Juego extends Producto {
             return false;
         }
 
-        // Un Modelo.DLC no puede pertenecer a dos juegos diferentes
+        // Un DLC no puede pertenecer a dos juegos diferentes
         if (dlc.getJuego() != null && dlc.getJuego() != this) {
             return false;
         }

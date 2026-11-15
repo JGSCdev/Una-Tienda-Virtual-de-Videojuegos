@@ -15,8 +15,7 @@ public abstract class Producto implements Comparable<Producto> {
     private boolean estado = true;
 
     // Constructor para crear un producto nuevo
-    public Producto(Desarrollador desarrollador, String descripcion,
-                    String nombre, double pesoGB, double precio) {
+    public Producto(Desarrollador desarrollador, String descripcion, String nombre, double pesoGB, double precio) {
 
         if (desarrollador == null) {
             throw new IllegalArgumentException("El desarrollador no puede ser null");
@@ -27,15 +26,11 @@ public abstract class Producto implements Comparable<Producto> {
         setNombre(nombre);
         setPesoGB(pesoGB);
         setPrecio(precio);
-
         this.fechaLanzamiento = LocalDate.now();
     }
 
     // Constructor para reconstruir un producto desde la base de datos
-    protected Producto(int id, Desarrollador desarrollador,
-                       String descripcion, String nombre,
-                       LocalDate fechaLanzamiento, double pesoGB,
-                       double precio, boolean estado) {
+    public Producto(int id, Desarrollador desarrollador, String descripcion, String nombre, LocalDate fechaLanzamiento, double pesoGB, double precio, boolean estado) {
 
         this(desarrollador, descripcion, nombre, pesoGB, precio);
 
@@ -50,7 +45,7 @@ public abstract class Producto implements Comparable<Producto> {
 
     // Métodos auxiliares de validación
 
-    private void validarTexto(String texto, String atributo) {
+    protected void validarTexto(String texto, String atributo) {
         if (texto == null || texto.isBlank()) {
             throw new IllegalArgumentException(atributo + " inválido");
         }
@@ -60,8 +55,7 @@ public abstract class Producto implements Comparable<Producto> {
 
     public double precioFinal(double descuento) {
 
-        if (!Double.isFinite(descuento) ||
-                descuento < 0 || descuento > 100) {
+        if (!Double.isFinite(descuento) || descuento < 0 || descuento > 100) {
             throw new IllegalArgumentException("Descuento inválido");
         }
 
