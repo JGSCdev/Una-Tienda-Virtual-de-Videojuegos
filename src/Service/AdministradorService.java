@@ -1,25 +1,30 @@
+
 package Service;
 
+import Coleciones.ColeccionGestoresGenerica;
 import Modelo.Administrador;
 import Persistencia.AdministradorDAO;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AdministradorService {
 
     private final AdministradorDAO dao;
-    private final List<Administrador> lista;
+    private final ColeccionGestoresGenerica<Administrador> coleccion;
 
     // Constructor que recibe el DAO y carga los administradores desde MySQL
     public AdministradorService(AdministradorDAO dao) throws SQLException {
+
         if (dao == null) {
             throw new IllegalArgumentException("El DAO no puede ser nulo");
         }
 
         this.dao = dao;
-        this.lista = new ArrayList<>(dao.listarTodos());
+        this.coleccion = new ColeccionGestoresGenerica<>();
+
+        // Carga los administradores recuperados de MySQL en la colección
+        coleccion.cargar(dao.listarTodos());
     }
 
     // -------------------- CUENTAS DE ADMINISTRADOR --------------------
@@ -37,12 +42,14 @@ public class AdministradorService {
         }
 
         // Verifica que la contraseña sea válida
-        if (administrador.getContrasenia() == null || administrador.getContrasenia().isBlank()) {
+        if (administrador.getContrasenia() == null ||
+                administrador.getContrasenia().isBlank()) {
             return false;
         }
 
         // Verifica que el PIN sea válido
-        if (administrador.getPin() == null || administrador.getPin().isBlank()) {
+        if (administrador.getPin() == null ||
+                administrador.getPin().isBlank()) {
             return false;
         }
 
@@ -53,15 +60,22 @@ public class AdministradorService {
             return false;
         }
 
-        // Asigna el ID y agrega el objeto a la colección en memoria
+        // Asigna el ID generado por la base de datos
         administrador.asignarIdGenerado(idGenerado);
-        lista.add(administrador);
+
+        // Agrega el administrador a la colección en memoria
+        if (!coleccion.agregar(administrador)) {
+            throw new IllegalStateException(
+                    "No se pudo agregar el administrador a la colección"
+            );
+        }
 
         return true;
     }
 
     // Busca un administrador por su ID dentro de la colección
     public Administrador consultar(int id) {
+
         if (id <= 0) {
             return null;
         }
@@ -71,11 +85,12 @@ public class AdministradorService {
 
     // Devuelve una copia no modificable de la colección
     public List<Administrador> listarTodos() {
-        return List.copyOf(lista);
+        return coleccion.listarTodos();
     }
 
     // Modifica la contraseña de un administrador
-    public boolean actualizarContrasenia(int id, String contrasenia) throws SQLException {
+    public boolean actualizarContrasenia(int id, String contrasenia)
+            throws SQLException {
 
         if (id <= 0 || contrasenia == null || contrasenia.isBlank()) {
             return false;
@@ -143,7 +158,7 @@ public class AdministradorService {
 
         // Si la eliminación fue exitosa, elimina el objeto de la colección
         if (resultado) {
-            lista.remove(administrador);
+            coleccion.eliminar(id);
         }
 
         return resultado;
@@ -151,14 +166,8 @@ public class AdministradorService {
 
     // -------------------- MÉTODOS AUXILIARES --------------------
 
-    // Busca un administrador por ID dentro de la lista
+    // Busca un administrador por ID dentro de la colección
     private Administrador buscarEnLista(int id) {
-        for (Administrador administrador : lista) {
-            if (administrador.getId() == id) {
-                return administrador;
-            }
-        }
-
-        return null;
+        return coleccion.consultar(id);
     }
 }

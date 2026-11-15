@@ -1,25 +1,30 @@
+
 package Service;
 
+import Coleciones.ColeccionGestoresGenerica;
 import Persistencia.SoporteDAO;
 import Modelo.Soporte;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SoporteService {
 
     private final SoporteDAO dao;
-    private final List<Soporte> lista;
+    private final ColeccionGestoresGenerica<Soporte> coleccion;
 
     // Constructor que recibe el DAO y carga los soportes desde MySQL
     public SoporteService(SoporteDAO dao) throws SQLException {
+
         if (dao == null) {
             throw new IllegalArgumentException("El DAO no puede ser nulo");
         }
 
         this.dao = dao;
-        this.lista = new ArrayList<>(dao.listarTodos());
+        this.coleccion = new ColeccionGestoresGenerica<>();
+
+        // Carga los soportes recuperados de MySQL en la colección
+        coleccion.cargar(dao.listarTodos());
     }
 
     // -------------------- CUENTAS DE SOPORTE --------------------
@@ -53,9 +58,15 @@ public class SoporteService {
             return false;
         }
 
-        // Asigna el ID y agrega el soporte a la colección en memoria
+        // Asigna el ID generado por la base de datos
         s.asignarIdGenerado(idGenerado);
-        lista.add(s);
+
+        // Agrega el soporte a la colección en memoria
+        if (!coleccion.agregar(s)) {
+            throw new IllegalStateException(
+                    "No se pudo agregar el soporte a la colección"
+            );
+        }
 
         return true;
     }
@@ -68,16 +79,19 @@ public class SoporteService {
 
     // Devuelve una copia no modificable de la colección
     public List<Soporte> listarTodos() {
-        return List.copyOf(lista);
+        return coleccion.listarTodos();
     }
 
     // Modificar la contraseña de un soporte
-    public boolean actualizarContrasenia(int id, String nuevaContrasenia) throws SQLException {
+    public boolean actualizarContrasenia(int id, String nuevaContrasenia)
+            throws SQLException {
 
         validarId(id);
 
         if (nuevaContrasenia == null || nuevaContrasenia.isBlank()) {
-            throw new IllegalArgumentException("La contraseña no puede estar vacía");
+            throw new IllegalArgumentException(
+                    "La contraseña no puede estar vacía"
+            );
         }
 
         // Busca el soporte que se quiere modificar
@@ -104,7 +118,9 @@ public class SoporteService {
         validarId(id);
 
         if (nuevoPin == null || nuevoPin.isBlank()) {
-            throw new IllegalArgumentException("El PIN no puede estar vacío");
+            throw new IllegalArgumentException(
+                    "El PIN no puede estar vacío"
+            );
         }
 
         // Busca el soporte que se quiere modificar
@@ -140,9 +156,9 @@ public class SoporteService {
         // Elimina primero el soporte y sus quejas de MySQL
         boolean resultado = dao.eliminar(id) > 0;
 
-        // Si MySQL confirma la eliminación, retira el soporte de la colección
+        // Si la eliminación fue exitosa, retira el soporte de la colección
         if (resultado) {
-            lista.remove(soporte);
+            coleccion.eliminar(id);
         }
 
         return resultado;
@@ -151,7 +167,8 @@ public class SoporteService {
     // -------------------- GESTIÓN DE QUEJAS --------------------
 
     // Registrar una queja utilizando el ID del soporte
-    public boolean insertarQueja(int idSoporte, String queja) throws SQLException {
+    public boolean insertarQueja(int idSoporte, String queja)
+            throws SQLException {
 
         validarId(idSoporte);
         validarQueja(queja);
@@ -190,7 +207,8 @@ public class SoporteService {
     }
 
     // Atender una queja utilizando el ID del soporte
-    public boolean atenderQueja(int idSoporte, String queja) throws SQLException {
+    public boolean atenderQueja(int idSoporte, String queja)
+            throws SQLException {
 
         validarId(idSoporte);
         validarQueja(queja);
@@ -214,7 +232,8 @@ public class SoporteService {
     }
 
     // Recibir una queja y actualizar el objeto Soporte
-    public boolean recibirQueja(Soporte s, String queja) throws SQLException {
+    public boolean recibirQueja(Soporte s, String queja)
+            throws SQLException {
 
         if (s == null) {
             throw new IllegalArgumentException("El soporte no puede ser nulo");
@@ -223,7 +242,7 @@ public class SoporteService {
         validarId(s.getId());
         validarQueja(queja);
 
-        // Busca el objeto que realmente está almacenado en el Service
+        // Busca el objeto que realmente está almacenado en la colección
         Soporte soporteEnLista = buscarEnLista(s.getId());
 
         if (soporteEnLista == null) {
@@ -233,7 +252,7 @@ public class SoporteService {
         // Guarda primero la queja en MySQL
         boolean resultado = dao.insertarQueja(s.getId(), queja) > 0;
 
-        // Si se guardó correctamente, actualiza la colección del Service y el objeto recibido
+        // Si se guardó correctamente, actualiza la colección y el objeto recibido
         if (resultado) {
             soporteEnLista.recibirQueja(queja);
 
@@ -246,7 +265,8 @@ public class SoporteService {
     }
 
     // Atender una queja y actualizar el objeto Soporte
-    public boolean atenderQueja(Soporte s, String queja) throws SQLException {
+    public boolean atenderQueja(Soporte s, String queja)
+            throws SQLException {
 
         if (s == null) {
             throw new IllegalArgumentException("El soporte no puede ser nulo");
@@ -255,7 +275,7 @@ public class SoporteService {
         validarId(s.getId());
         validarQueja(queja);
 
-        // Busca el objeto que realmente está almacenado en el Service
+        // Busca el objeto que realmente está almacenado en la colección
         Soporte soporteEnLista = buscarEnLista(s.getId());
 
         if (soporteEnLista == null) {
@@ -265,7 +285,7 @@ public class SoporteService {
         // Elimina primero la queja de MySQL
         boolean resultado = dao.eliminarQueja(s.getId(), queja) > 0;
 
-        // Si se eliminó correctamente, actualiza la colección del Service y el objeto recibido
+        // Si se eliminó correctamente, actualiza la colección y el objeto recibido
         if (resultado) {
             soporteEnLista.atenderQueja(queja);
 
@@ -289,20 +309,16 @@ public class SoporteService {
     // Verifica que una queja no sea nula ni esté vacía
     private void validarQueja(String queja) {
         if (queja == null || queja.isBlank()) {
-            throw new IllegalArgumentException("La queja no puede estar vacía");
+            throw new IllegalArgumentException(
+                    "La queja no puede estar vacía"
+            );
         }
     }
 
     // -------------------- MÉTODOS AUXILIARES --------------------
 
-    // Busca un soporte por ID dentro de la lista
+    // Busca un soporte por ID dentro de la colección
     private Soporte buscarEnLista(int id) {
-        for (Soporte soporte : lista) {
-            if (soporte.getId() == id) {
-                return soporte;
-            }
-        }
-
-        return null;
+        return coleccion.consultar(id);
     }
 }
