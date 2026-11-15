@@ -132,6 +132,7 @@ public class DesarrolladorDAO {
         return lista;
     }
 
+
     // Actualizar datos del desarrollador, ganancias, etc.
     public boolean actualizar(Desarrollador desarrollador) {
         String sql = "UPDATE desarrolladores SET username = ?, email = ?, estado = ?, descripcion = ?, nacionalidad = ?, nombre = ?, apellido = ?, fecha_nacimiento = ?, ganancias = ?, valoracion_general = ? WHERE id = ?";
