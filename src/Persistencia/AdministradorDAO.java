@@ -1,6 +1,5 @@
 package Persistencia;
 
-
 import Conexion.Conexion;
 import Modelo.Administrador;
 
@@ -13,14 +12,18 @@ import java.util.List;
 
 public class AdministradorDAO {
 
+    // -------------------- CUENTAS DE ADMINISTRADOR --------------------
+
     // Inserta un administrador y devuelve el ID generado
     public int insertar(Administrador administrador) throws SQLException {
 
         String sqlInsert = "INSERT INTO administrador (contrasenia, pin) VALUES (?, ?)";
+
         String sqlID = "SELECT LAST_INSERT_ID()";
 
         try (Connection con = Conexion.getConnection();
-             PreparedStatement psInsert = con.prepareStatement(sqlInsert)) {
+             PreparedStatement psInsert =
+                     con.prepareStatement(sqlInsert)) {
 
             psInsert.setString(1, administrador.getContrasenia());
             psInsert.setString(2, administrador.getPin());
@@ -31,6 +34,8 @@ public class AdministradorDAO {
                 return 0;
             }
 
+            // Recuperamos el ID generado por MySQL
+            // Utilizamos la misma conexión del INSERT
             try (PreparedStatement psID = con.prepareStatement(sqlID);
                  ResultSet rs = psID.executeQuery()) {
 
@@ -127,7 +132,10 @@ public class AdministradorDAO {
         }
     }
 
-    // Convierte un registro de la base de datos en un objeto Administrador
+    // -------------------- MÉTODO AUXILIAR --------------------
+
+    // Convierte un registro de la base de dato
+    // en un objeto Administrador
     private Administrador mapearAdministrador(ResultSet rs) throws SQLException {
 
         return new Administrador(
@@ -137,4 +145,3 @@ public class AdministradorDAO {
         );
     }
 }
-

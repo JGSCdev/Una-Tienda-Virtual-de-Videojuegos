@@ -1,3 +1,4 @@
+
 package Persistencia;
 
 import Conexion.Conexion;
@@ -14,7 +15,7 @@ public class SoporteDAO {
 
     // -------------------- CUENTAS DE SOPORTE --------------------
 
-    // Registrar un nuevo soporte y devolver el ID generado.
+    // Registrar un nuevo soporte y devolver el ID generado
     public int insertar(Soporte s) throws SQLException {
 
         String sqlInsert = "INSERT INTO soporte (contrasenia, pin) VALUES (?, ?)";
@@ -32,7 +33,7 @@ public class SoporteDAO {
                 return 0;
             }
 
-            // Recuperamos el ID generado por MySQL.
+            // Recuperamos el ID generado utilizando la misma conexión del INSERT
             try (PreparedStatement psID = con.prepareStatement(sqlID);
                  ResultSet rs = psID.executeQuery()) {
 
@@ -45,7 +46,7 @@ public class SoporteDAO {
         return 0;
     }
 
-    // Consultar un soporte por su ID.
+    // Consultar un soporte por su ID
     public Soporte consultar(int id) throws SQLException {
 
         String sql = "SELECT * FROM soporte WHERE id = ?";
@@ -65,7 +66,7 @@ public class SoporteDAO {
                             rs.getString("pin")
                     );
 
-                    // Cargamos las quejas asociadas al soporte.
+                    // Cargamos las quejas asociadas al soporte
                     cargarQuejas(con, s);
 
                     return s;
@@ -76,7 +77,7 @@ public class SoporteDAO {
         return null;
     }
 
-    // Listar todos los soportes.
+    // Listar todos los soportes
     public List<Soporte> listarTodos() throws SQLException {
 
         List<Soporte> lista = new ArrayList<>();
@@ -95,7 +96,7 @@ public class SoporteDAO {
                         rs.getString("pin")
                 );
 
-                // Recuperamos las quejas de cada soporte.
+                // Recuperamos las quejas de cada soporte
                 cargarQuejas(con, s);
 
                 lista.add(s);
@@ -105,9 +106,8 @@ public class SoporteDAO {
         return lista;
     }
 
-    // Modificar la contraseña de un soporte.
-    public int actualizarContrasenia(int id, String nuevaContrasenia)
-            throws SQLException {
+    // Modificar la contraseña de un soporte
+    public int actualizarContrasenia(int id, String nuevaContrasenia) throws SQLException {
 
         String sql = "UPDATE soporte SET contrasenia = ? WHERE id = ?";
 
@@ -121,7 +121,7 @@ public class SoporteDAO {
         }
     }
 
-    // Modificar el PIN de un soporte.
+    // Modificar el PIN de un soporte
     public int actualizarPin(int id, String nuevoPin) throws SQLException {
 
         String sql = "UPDATE soporte SET pin = ? WHERE id = ?";
@@ -136,7 +136,7 @@ public class SoporteDAO {
         }
     }
 
-    // Eliminar un soporte y sus quejas asociadas.
+    // Eliminar un soporte y sus quejas asociadas
     public int eliminar(int id) throws SQLException {
 
         String sqlQuejas = "DELETE FROM quejas WHERE id_soporte = ?";
@@ -144,17 +144,18 @@ public class SoporteDAO {
 
         try (Connection con = Conexion.getConnection()) {
 
+            // Desactivamos el autocommit para controlar la transacción
             con.setAutoCommit(false);
 
             try {
 
-                // Primero eliminamos las quejas asociadas.
+                // Primero eliminamos las quejas asociadas al soporte
                 try (PreparedStatement psQuejas = con.prepareStatement(sqlQuejas)) {
                     psQuejas.setInt(1, id);
                     psQuejas.executeUpdate();
                 }
 
-                // Luego eliminamos el soporte.
+                // Luego eliminamos el soporte
                 int filas;
 
                 try (PreparedStatement psSoporte = con.prepareStatement(sqlSoporte)) {
@@ -162,25 +163,27 @@ public class SoporteDAO {
                     filas = psSoporte.executeUpdate();
                 }
 
+                // Confirmamos ambas operaciones
                 con.commit();
 
                 return filas;
 
             } catch (SQLException e) {
 
+                // Deshacemos los cambios si alguna operación falla
                 con.rollback();
                 throw e;
 
             } finally {
+                // Restauramos el autocommit
                 con.setAutoCommit(true);
             }
         }
     }
 
-
     // -------------------- QUEJAS --------------------
 
-    // Registrar una queja asociada a un soporte.
+    // Registrar una queja asociada a un soporte
     public int insertarQueja(int idSoporte, String queja) throws SQLException {
 
         String sql = "INSERT INTO quejas (id_soporte, queja) VALUES (?, ?)";
@@ -195,7 +198,7 @@ public class SoporteDAO {
         }
     }
 
-    // Consultar todas las quejas de un soporte.
+    // Consultar todas las quejas de un soporte
     public List<String> consultarQuejas(int idSoporte) throws SQLException {
 
         List<String> lista = new ArrayList<>();
@@ -218,7 +221,7 @@ public class SoporteDAO {
         return lista;
     }
 
-    // Eliminar una queja de un soporte.
+    // Eliminar una queja de un soporte
     public int eliminarQueja(int idSoporte, String queja) throws SQLException {
 
         String sql = "DELETE FROM quejas WHERE id_soporte = ? AND queja = ? LIMIT 1";
@@ -233,11 +236,9 @@ public class SoporteDAO {
         }
     }
 
-
     // -------------------- MÉTODO AUXILIAR --------------------
 
-    // Recupera todas las quejas de un soporte.
-    // Método privado para reutilizar la conexión existente.
+    // Recupera todas las quejas de un soporte utilizando una conexión existente
     private void cargarQuejas(Connection con, Soporte s) throws SQLException {
 
         String sql = "SELECT queja FROM quejas WHERE id_soporte = ?";

@@ -45,6 +45,24 @@ public abstract class Gestores {
         return pin;
     }
 
+    // Modifica la contraseña del gestor
+    public void setContrasenia(String contrasenia) {
+        if (contrasenia == null || contrasenia.isBlank()) {
+            throw new IllegalArgumentException("La contraseña no puede estar vacía");
+        }
+
+        this.contrasenia = contrasenia;
+    }
+
+    // Modifica el PIN del gestor
+    public void setPin(String pin) {
+        if (pin == null || pin.isBlank()) {
+            throw new IllegalArgumentException("El PIN no puede estar vacío");
+        }
+
+        this.pin = pin;
+    }
+
     public Map<Integer, Usuario> getListaUsuarios() {
         return Collections.unmodifiableMap(listaUsuarios);
     }
