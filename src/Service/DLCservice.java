@@ -3,13 +3,28 @@ package Service;
 import Modelo.DLC;
 import Persistencia.DLCdao;
 
-import java.util.List;
+import java.util.*;
 
 public class DLCservice {
 
-    private final DLCdao dlcDao = new DLCdao();
+    private final DLCdao dlcDao;
+    private final Map<Integer, DLC> repositorioMemoria;
 
-    //Agrega un nuevo DLC validando los datos necesarios.
+    // Constructor: inicializa el DAO y la caché en memoria, precargando los DLCs de la BD.
+    public DLCservice() {
+        this.dlcDao = new DLCdao();
+        this.repositorioMemoria = new HashMap<>();
+        cargarDLCsDesdeBD();
+    }
+
+    private void cargarDLCsDesdeBD() {
+        List<DLC> dlcBD = dlcDao.listarTodos();
+        for (DLC dlc : dlcBD) {
+            repositorioMemoria.put(dlc.getId(), dlc);
+        }
+    }
+
+    // Agrega un nuevo DLC validando los datos necesarios y actualiza la caché.
     public boolean agregar(DLC dlc) {
         if (dlc == null || dlc.getJuego() == null) {
             return false;
@@ -17,61 +32,75 @@ public class DLCservice {
         if (dlc.getJuego().getId() <= 0 || dlc.getDesarrollador() == null || dlc.getDesarrollador().getId() <= 0) {
             return false;
         }
-        return dlcDao.agregar(dlc);
+
+        boolean exito = dlcDao.agregar(dlc);
+        if (exito && dlc.getId() > 0) {
+            repositorioMemoria.put(dlc.getId(), dlc);
+        }
+        return exito;
     }
 
-    //Elimina un DLC por su ID.
+    // Elimina un DLC por su ID y lo quita de la caché.
     public boolean eliminar(int id) {
         if (id <= 0) {
             return false;
         }
-        return dlcDao.eliminar(id);
+
+        boolean exito = dlcDao.eliminar(id);
+        if (exito) {
+            repositorioMemoria.remove(id);
+        }
+        return exito;
     }
 
-    //Busca y devuelve un DLC por su ID.
+    // Busca y devuelve un DLC por su ID (desde la caché).
     public DLC buscarPorId(int id) {
         if (id <= 0) {
             return null;
         }
-        return dlcDao.buscarPorId(id);
+        return repositorioMemoria.get(id);
     }
 
-    //Lista todos los DLCs registrados.
+    // Lista todos los DLCs registrados (desde la caché).
     public List<DLC> listarTodos() {
-        return dlcDao.listarTodos();
+        return new ArrayList<>(repositorioMemoria.values());
     }
 
-    //Da de alta (activa) un DLC por su ID.
+    // Da de alta (activa) un DLC por su ID y sincroniza la caché.
     public boolean darDeAlta(int id) {
-        if (id <= 0) {
-            return false;
-        }
-        DLC dlc = buscarPorId(id);
-        if (dlc == null) {
-            return false;
-        }
-        return dlcDao.cambiarEstado(id, true);
+        return cambiarEstadoYSincronizar(id, true);
     }
 
-    //Da de baja (desactiva) un DLC por su ID.
+    // Da de baja (desactiva) un DLC por su ID y sincroniza la caché.
     public boolean darDeBaja(int id) {
+        return cambiarEstadoYSincronizar(id, false);
+    }
+
+    private boolean cambiarEstadoYSincronizar(int id, boolean activo) {
         if (id <= 0) {
             return false;
         }
-        DLC dlc = buscarPorId(id);
-        if (dlc == null) {
+        if (!repositorioMemoria.containsKey(id)) {
             return false;
         }
-        return dlcDao.cambiarEstado(id, false);
+
+        boolean exito = dlcDao.cambiarEstado(id, activo);
+        if (exito) {
+            // Re-sincronizamos el objeto desde la BD para asegurar consistencia
+            DLC actualizado = dlcDao.buscarPorId(id);
+            if (actualizado != null) {
+                repositorioMemoria.put(id, actualizado);
+            }
+        }
+        return exito;
     }
 
-    //Modifica un DLC existente validando los datos.
+    // Modifica un DLC existente validando los datos y actualiza la caché.
     public boolean modificar(DLC dlc) {
         if (dlc == null || dlc.getId() <= 0) {
             return false;
         }
-        DLC dlcExistente = buscarPorId(dlc.getId());
-        if (dlcExistente == null) {
+        if (!repositorioMemoria.containsKey(dlc.getId())) {
             return false;
         }
         if (dlc.getJuego() == null || dlc.getJuego().getId() <= 0) {
@@ -80,8 +109,12 @@ public class DLCservice {
         if (dlc.getDesarrollador() == null || dlc.getDesarrollador().getId() <= 0) {
             return false;
         }
-        return dlcDao.modificar(dlc);
-    }
 
+        boolean exito = dlcDao.modificar(dlc);
+        if (exito) {
+            repositorioMemoria.put(dlc.getId(), dlc);
+        }
+        return exito;
+    }
 
 }
