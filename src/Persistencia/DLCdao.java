@@ -13,6 +13,7 @@ import java.util.List;
 
 public class DLCdao {
 
+    //Agrega un nuevo DLC a la base de datos.
     public boolean agregar(DLC dlc) {
         if (dlc == null || dlc.getJuego() == null) {
             return false;
@@ -46,6 +47,7 @@ public class DLCdao {
         return false;
     }
 
+    //Cambia el estado (activo/inactivo) de un DLC.
     public boolean cambiarEstado(int id, boolean estado) {
         String sql = "UPDATE dlc SET estado = ? WHERE id = ?";
         try (Connection conn = Conexion.getConnection();
@@ -59,6 +61,7 @@ public class DLCdao {
         }
     }
 
+    //Elimina un DLC de la base de datos por su ID.
     public boolean eliminar(int id) {
         String sql = "DELETE FROM dlc WHERE id = ?";
         try (Connection conn = Conexion.getConnection();
@@ -71,6 +74,7 @@ public class DLCdao {
         }
     }
 
+    //Mapea un ResultSet a un objeto DLC.
     private DLC mapearDlc(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         String nombre = rs.getString("nombre");
@@ -93,6 +97,7 @@ public class DLCdao {
                 pesoGB, precio, estado, juego, contenido);
     }
 
+    //Lista todos los DLCs registrados en la base de datos.
     public List<DLC> listarTodos() {
         List<DLC> lista = new ArrayList<>();
         String sql = "SELECT * FROM dlc";
@@ -108,6 +113,7 @@ public class DLCdao {
         return lista;
     }
 
+    //Busca y devuelve un DLC por su ID.
     public DLC buscarPorId(int id) {
         String sql = "SELECT * FROM dlc WHERE id = ?";
         try (Connection conn = Conexion.getConnection();
@@ -124,6 +130,7 @@ public class DLCdao {
         return null;
     }
 
+    //Modifica los datos de un DLC existente.
     public boolean modificar(DLC dlc) {
         if (dlc == null || dlc.getId() <= 0) {
             return false;

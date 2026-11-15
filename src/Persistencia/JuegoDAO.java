@@ -13,6 +13,7 @@ import java.util.List;
 
 public class JuegoDAO {
 
+    //Agrega un nuevo juego a la base de datos.
     public boolean agregar(Juego juego) {
         if (juego == null) {
             return false;
@@ -55,6 +56,7 @@ public class JuegoDAO {
         return false;
     }
 
+    //Cambia el estado (activo/inactivo) de un juego.
     public boolean cambiarEstado(int id, boolean estado) {
         String sql = "UPDATE juego SET estado = ? WHERE id = ?";
         try (Connection conn = Conexion.getConnection();
@@ -68,6 +70,7 @@ public class JuegoDAO {
         }
     }
 
+    //Elimina un juego de la base de datos por su ID.
     public boolean eliminar(int id) {
         String sql = "DELETE FROM juego WHERE id = ?";
         try (Connection conn = Conexion.getConnection();
@@ -80,6 +83,7 @@ public class JuegoDAO {
         }
     }
 
+    //Mapea un ResultSet a un objeto Juego.
     private Juego mapearJuego(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         String nombre = rs.getString("nombre");
@@ -106,6 +110,7 @@ public class JuegoDAO {
                 requisitosMinimos, requisitosRecomendados, dlcs);
     }
 
+    //Busca y devuelve un juego por su ID.
     public Juego buscarPorId(int id) {
 
         String sql = "SELECT * FROM juego WHERE id = ?";
@@ -126,6 +131,7 @@ public class JuegoDAO {
         return null;
     }
 
+    //Lista todos los juegos registrados en la base de datos.
     public List<Juego> listarTodos() {
         List<Juego> lista = new ArrayList<>();
         String sql = "SELECT * FROM juego";
@@ -141,6 +147,7 @@ public class JuegoDAO {
         return lista;
     }
 
+    //Modifica los datos de un juego existente.
     public boolean modificar(Juego juego) {
         if (juego == null || juego.getId() <= 0) {
             return false;
