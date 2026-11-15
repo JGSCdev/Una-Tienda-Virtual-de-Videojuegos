@@ -1,4 +1,4 @@
-package Coleciones;
+package Colecciones;
 import Modelo.Usuario;
 
 import java.util.*;

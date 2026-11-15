@@ -1,7 +1,7 @@
 
 package Service;
 
-import Coleciones.ColeccionGestoresGenerica;
+import Colecciones.ColeccionGestoresGenerica;
 import Persistencia.SoporteDAO;
 import Modelo.Soporte;
 

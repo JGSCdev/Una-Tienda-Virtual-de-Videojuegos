@@ -1,6 +1,6 @@
 package Service;
 
-import Coleciones.ColeccionUsuariosGenerica;
+import Colecciones.ColeccionUsuariosGenerica;
 import Excepciones.UsuarioDuplicadoException;
 import Excepciones.UsuarioNoEncontradoException;
 import Excepciones.UsuarioServiceException;

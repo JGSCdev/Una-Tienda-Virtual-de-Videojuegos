@@ -1,5 +1,5 @@
 
-package Coleciones;
+package Colecciones;
 
 import Modelo.Gestores;
 

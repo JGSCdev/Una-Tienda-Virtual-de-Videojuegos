@@ -1,4 +1,4 @@
-package Coleciones;
+package Colecciones;
 import Modelo.Producto;
 
 import java.util.LinkedHashMap;
