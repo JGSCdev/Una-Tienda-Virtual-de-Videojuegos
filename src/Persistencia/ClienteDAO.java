@@ -107,12 +107,7 @@ public class ClienteDAO {
         return lista;//Retorna la lista de objetos Cliente.
     }
 
-    /**
-     *
-     *
-     * @param cliente Objeto Cliente con los nuevos datos.
-     * @return
-     */
+
     public boolean actualizar(Cliente cliente) { //Actualiza la información personal de un cliente existente en la base de datos.
         String sql = "UPDATE clientes SET username = ?, contrasenia = ?, email = ?, estado = ?, descripcion = ?, nacionalidad = ?, nombre = ?, apellido = ?, fecha_nacimiento = ?, saldo = ?, tiempo_conectado = ?, fecha_ultima_conexion = ? WHERE id = ?";
 
@@ -369,7 +364,7 @@ public class ClienteDAO {
 
 
     // ==========================================
-    //    CRUD / ACTUALIZACIÓN - AMIGOS
+    //           ACTUALIZACIÓN - AMIGOS
     // ==========================================
 
 
