@@ -1,6 +1,7 @@
 package Enum;
 
-public enum TipoContenido {
+public enum TipoContenido
+{
 
     EXPANSION("Contenido grande que amplia la historia, misiones y mecanicas principales."),
     MODOS("Nuevas reglas o variantes de jugabilidad que cambian la forma de jugar."),
