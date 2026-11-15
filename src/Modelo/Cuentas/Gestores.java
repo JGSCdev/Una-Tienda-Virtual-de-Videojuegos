@@ -1,24 +1,40 @@
-
-package Modelo;
+package Modelo.Cuentas;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class  Gestores {
+public abstract class Gestores {
 
+    private int id;
     private String contrasenia;
     private String pin;
 
-    // Es static para que Administrador y Soporte compartan la misma lista de usuarios
+    // Colección compartida de usuarios registrados
     private static Map<Integer, Usuario> listaUsuarios = new HashMap<>();
 
+    // Constructor para crear un gestor nuevo
     public Gestores(String contrasenia, String pin) {
+        this.id = 0;
+        this.contrasenia = contrasenia;
+        this.pin = pin;
+    }
+
+    // Constructor para recuperar un gestor de la BD
+    public Gestores(int id, String contrasenia, String pin) {
+        this.id = id;
         this.contrasenia = contrasenia;
         this.pin = pin;
     }
 
     public Gestores() {
+        this.id = 0;
+    }
+
+    // -------------------- GETTERS --------------------
+
+    public int getId() {
+        return id;
     }
 
     public String getContrasenia() {
@@ -30,8 +46,22 @@ public abstract class  Gestores {
     }
 
     public Map<Integer, Usuario> getListaUsuarios() {
-        // Devuelve una vista no modificable para impedir que otras clases alteren directamente la colección
         return Collections.unmodifiableMap(listaUsuarios);
+    }
+
+    // Asigna el ID generado automáticamente por la base de datos.
+    // Solo permite asignarlo si el gestor todavía no tiene un ID.
+    public void asignarIdGenerado(int id) {
+
+        if (this.id != 0) {
+            throw new IllegalStateException("El gestor ya tiene un ID asignado");
+        }
+
+        if (id <= 0) {
+            throw new IllegalArgumentException("El ID debe ser válido");
+        }
+
+        this.id = id;
     }
 
     //-------------------------------------METODOS---------------------------------------------------
@@ -102,6 +132,4 @@ public abstract class  Gestores {
             usuario.reactivar(); // Cambia el estado a true
         }
     }
-
-
 }

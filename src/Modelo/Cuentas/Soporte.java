@@ -1,5 +1,4 @@
-
-package Modelo;
+package Modelo.Cuentas;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,9 +8,16 @@ public final class Soporte extends Gestores {
 
     private List<String> quejas;
 
+    // Crear una cuenta nueva
     public Soporte(String contrasenia, String pin) {
-        super(contrasenia, pin); // Inicializa los atributos heredados de Gestores
-        this.quejas = new ArrayList<>(); // Crea la lista donde se almacenarán las quejas
+        super(contrasenia, pin);
+        this.quejas = new ArrayList<>();
+    }
+
+    // Recuperar una cuenta existente de MySQL
+    public Soporte(int id, String contrasenia, String pin) {
+        super(id, contrasenia, pin);
+        this.quejas = new ArrayList<>();
     }
 
     public void recibirQueja(String queja) {
