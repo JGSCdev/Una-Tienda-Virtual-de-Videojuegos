@@ -1,7 +1,7 @@
 package Service;
 
 import Persistencia.SoporteDAO;
-import Modelo.Cuentas.Soporte;
+import Modelo.Soporte;
 
 import java.sql.SQLException;
 import java.util.List;

@@ -1,7 +1,7 @@
 package Persistencia;
 
 import Conexion.Conexion;
-import Modelo.Cuentas.Soporte;
+import Modelo.Soporte;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
