@@ -16,6 +16,7 @@ public class SoporteDAO {
     // Guarda una queja en la base de datos
     public int insertar(String queja) throws SQLException {
 
+
         String sql = "INSERT INTO quejas (descripcion) VALUES (?)";
 
         try (Connection con = Conexion.getConnection();

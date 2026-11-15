@@ -497,6 +497,7 @@ public class ClienteDAO {
     }
 
 
+
     private Producto mapearProductoConDesarrollador(Connection con, ResultSet rs) throws SQLException {//Reconstruye un producto (ya sea un Juego o un DLC) junto con su Desarrollador asociado a partir de los resultados de una consulta SQL con JOIN.
         // 1. Reconstruir el objeto Desarrollador asociado
         int devId = rs.getInt("dev_id");
