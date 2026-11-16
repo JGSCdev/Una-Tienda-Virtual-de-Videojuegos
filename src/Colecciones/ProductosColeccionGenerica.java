@@ -5,11 +5,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Collection;
 
-public class ProductosColeccion<T extends Producto> {
+public class ProductosColeccionGenerica<T extends Producto> {
 
     private Map<Integer, T> elementos;
 
-    public ProductosColeccion() {
+    public ProductosColeccionGenerica() {
         elementos = new LinkedHashMap<>();
     }
 

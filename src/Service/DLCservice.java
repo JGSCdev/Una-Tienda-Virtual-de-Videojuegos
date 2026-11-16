@@ -1,5 +1,6 @@
 package Service;
 
+import Colecciones.ProductosColeccionGenerica;
 import Modelo.DLC;
 import Persistencia.DLCdao;
 
@@ -8,19 +9,19 @@ import java.util.*;
 public class DLCservice {
 
     private final DLCdao dlcDao;
-    private final Map<Integer, DLC> repositorioMemoria;
+    private final ProductosColeccionGenerica<DLC> repositorioMemoria;
 
     // Constructor: inicializa el DAO y la caché en memoria, precargando los DLCs de la BD.
     public DLCservice() {
         this.dlcDao = new DLCdao();
-        this.repositorioMemoria = new HashMap<>();
+        this.repositorioMemoria = new ProductosColeccionGenerica<DLC>();
         cargarDLCsDesdeBD();
     }
 
     private void cargarDLCsDesdeBD() {
         List<DLC> dlcBD = dlcDao.listarTodos();
         for (DLC dlc : dlcBD) {
-            repositorioMemoria.put(dlc.getId(), dlc);
+            repositorioMemoria.agregar(dlc);
         }
     }
 
@@ -35,7 +36,7 @@ public class DLCservice {
 
         boolean exito = dlcDao.agregar(dlc);
         if (exito && dlc.getId() > 0) {
-            repositorioMemoria.put(dlc.getId(), dlc);
+            repositorioMemoria.agregar(dlc);
         }
         return exito;
     }
@@ -48,7 +49,7 @@ public class DLCservice {
 
         boolean exito = dlcDao.eliminar(id);
         if (exito) {
-            repositorioMemoria.remove(id);
+            repositorioMemoria.eliminar(id);
         }
         return exito;
     }
@@ -58,12 +59,12 @@ public class DLCservice {
         if (id <= 0) {
             return null;
         }
-        return repositorioMemoria.get(id);
+        return repositorioMemoria.buscar(id);
     }
 
     // Lista todos los DLCs registrados (desde la caché).
     public List<DLC> listarTodos() {
-        return new ArrayList<>(repositorioMemoria.values());
+        return new ArrayList<>(repositorioMemoria.listarTodos());
     }
 
     // Da de alta (activa) un DLC por su ID y sincroniza la caché.
@@ -80,7 +81,7 @@ public class DLCservice {
         if (id <= 0) {
             return false;
         }
-        if (!repositorioMemoria.containsKey(id)) {
+        if (!repositorioMemoria.contiene(id)) {
             return false;
         }
 
@@ -89,7 +90,7 @@ public class DLCservice {
             // Re-sincronizamos el objeto desde la BD para asegurar consistencia
             DLC actualizado = dlcDao.buscarPorId(id);
             if (actualizado != null) {
-                repositorioMemoria.put(id, actualizado);
+                repositorioMemoria.agregar(actualizado);
             }
         }
         return exito;
@@ -100,7 +101,7 @@ public class DLCservice {
         if (dlc == null || dlc.getId() <= 0) {
             return false;
         }
-        if (!repositorioMemoria.containsKey(dlc.getId())) {
+        if (!repositorioMemoria.contiene(dlc.getId())) {
             return false;
         }
         if (dlc.getJuego() == null || dlc.getJuego().getId() <= 0) {
@@ -112,7 +113,7 @@ public class DLCservice {
 
         boolean exito = dlcDao.modificar(dlc);
         if (exito) {
-            repositorioMemoria.put(dlc.getId(), dlc);
+            repositorioMemoria.agregar(dlc);
         }
         return exito;
     }

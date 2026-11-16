@@ -1,5 +1,6 @@
 package Service;
 
+import Colecciones.ProductosColeccionGenerica;
 import Modelo.Juego;
 import Persistencia.JuegoDAO;
 
@@ -8,19 +9,19 @@ import java.util.*;
 public class JuegoService {
 
     private final JuegoDAO juegoDAO;
-    private final Map<Integer, Juego> repositorioMemoria;
+    private final ProductosColeccionGenerica<Juego> repositorioMemoria ;
 
     // Constructor: inicializa el DAO y la caché en memoria, precargando los juegos de la BD.
     public JuegoService() {
         this.juegoDAO = new JuegoDAO();
-        this.repositorioMemoria = new HashMap<>();
+        this.repositorioMemoria = new ProductosColeccionGenerica<>();
         cargarJuegosDesdeBD();
     }
 
     private void cargarJuegosDesdeBD() {
         List<Juego> juegosBD = juegoDAO.listarTodos();
         for (Juego juego : juegosBD) {
-            repositorioMemoria.put(juego.getId(), juego);
+            repositorioMemoria.agregar(juego);
         }
     }
 
@@ -35,7 +36,7 @@ public class JuegoService {
 
         boolean exito = juegoDAO.agregar(juego);
         if (exito && juego.getId() > 0) {
-            repositorioMemoria.put(juego.getId(), juego);
+            repositorioMemoria.agregar(juego);
         }
         return exito;
     }
@@ -48,7 +49,7 @@ public class JuegoService {
 
         boolean exito = juegoDAO.eliminar(id);
         if (exito) {
-            repositorioMemoria.remove(id);
+            repositorioMemoria.eliminar(id);
         }
         return exito;
     }
@@ -58,12 +59,12 @@ public class JuegoService {
         if (id <= 0) {
             return null;
         }
-        return repositorioMemoria.get(id);
+        return repositorioMemoria.buscar(id);
     }
 
     // Lista todos los juegos registrados (desde la caché).
     public List<Juego> listarTodos() {
-        return new ArrayList<>(repositorioMemoria.values());
+        return new ArrayList<>(repositorioMemoria.listarTodos());
     }
 
     // Da de alta (activa) un juego por su ID y sincroniza la caché.
@@ -80,7 +81,7 @@ public class JuegoService {
         if (id <= 0) {
             return false;
         }
-        if (!repositorioMemoria.containsKey(id)) {
+        if (!repositorioMemoria.contiene(id)) {
             return false;
         }
 
@@ -89,7 +90,7 @@ public class JuegoService {
             // Re-sincronizamos el objeto desde la BD para asegurar consistencia
             Juego actualizado = juegoDAO.buscarPorId(id);
             if (actualizado != null) {
-                repositorioMemoria.put(id, actualizado);
+                repositorioMemoria.agregar(actualizado);
             }
         }
         return exito;
@@ -100,7 +101,7 @@ public class JuegoService {
         if (juego == null || juego.getId() <= 0) {
             return false;
         }
-        if (!repositorioMemoria.containsKey(juego.getId())) {
+        if (!repositorioMemoria.contiene(juego.getId())) {
             return false;
         }
         if (juego.getDesarrollador() == null || juego.getDesarrollador().getId() <= 0) {
@@ -109,7 +110,7 @@ public class JuegoService {
 
         boolean exito = juegoDAO.modificar(juego);
         if (exito) {
-            repositorioMemoria.put(juego.getId(), juego);
+            repositorioMemoria.agregar(juego);
         }
         return exito;
     }
