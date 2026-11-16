@@ -589,8 +589,12 @@ public class ClienteDAO {
 
         String sqlCliente =
                 "SELECT saldo, estado FROM clientes WHERE id = ? FOR UPDATE";
-        String sqlProducto =
-                "SELECT precio, estado FROM productos WHERE id = ? FOR UPDATE";
+        // Los IDs de juegos son menores a 1.000.000 y los de DLC comienzan
+        // en 1.000.000. Se bloquea la fila de la tabla fisica correspondiente.
+        // No se utiliza la vista UNION productos para este bloqueo transaccional.
+        String sqlProducto = (productoId >= 1_000_000)
+                ? "SELECT precio, estado FROM dlc WHERE id = ? FOR UPDATE"
+                : "SELECT precio, estado FROM juego WHERE id = ? FOR UPDATE";
         String sqlBiblioteca =
                 "SELECT 1 FROM cliente_biblioteca WHERE cliente_id = ? AND producto_id = ?";
         String sqlDescontar =
