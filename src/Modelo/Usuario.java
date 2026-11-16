@@ -59,8 +59,10 @@ public abstract class Usuario {
         if (email == null || email.isBlank()) { // verifica si el email ingresado es null o tiene espacios
             throw new IllegalArgumentException("El email no puede estar vacio");
         }
-        if (!cumpleRequisitosContrasenia(contrasenia)) { // verifica si la contraseña cumple con los requisitos
-            throw new IllegalArgumentException("La contrasenia debe tener al mas 10 caracteres y no contener espacios");
+        // Al reconstruir desde MySQL permitimos credenciales antiguas que ya
+        // existían antes de aplicar la regla de 10 caracteres a nuevos registros.
+        if (contrasenia == null || contrasenia.isBlank() || contrasenia.contains(" ")) {
+            throw new IllegalArgumentException("La contraseña almacenada no es válida.");
         }
         if (nacionalidad == null || nacionalidad.isBlank()) { // verifica que la nacionalidad no esté vacía
             throw new IllegalArgumentException("La nacionalidad no puede estar vacia");
@@ -187,7 +189,7 @@ public abstract class Usuario {
         if (clave == null) { // si es nula
             return false;
         }
-        if (clave.length() >= 10) { // comprueba si su longitud es menor a 10
+        if (clave.length() < 10) { // exige una longitud mínima de 10 caracteres
             return false;
         }
         if (clave.isBlank() || clave.contains(" ")) { // verifica si contiene espacios en blanco

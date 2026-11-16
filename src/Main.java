@@ -1,10 +1,15 @@
-
-
 // Santiago Vazquez
 // Ian Gosssela
 // Jesús Gonzalo Silva Correa
-void main() {
-    System.out.println(" probando el git y github :) ");
-    System.out.println(" hola soy ian");
 
+import GUI.Menu;
+
+void main() {
+    try {
+        Menu menu = new Menu();
+        menu.iniciar();
+    } catch (Exception e) {
+        System.out.println("No se pudo iniciar la tienda: " + e.getMessage());
+        e.printStackTrace();
+    }
 }

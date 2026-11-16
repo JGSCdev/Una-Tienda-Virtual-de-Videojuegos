@@ -1,6 +1,7 @@
 package Gestion;
 
 
+import Interfaces.iControlJuegos;
 import Modelo.Producto;
 import Modelo.Juego;
 import Modelo.DLC;
@@ -10,7 +11,7 @@ import Service.JuegoService;
 
 import java.util.*;
 
-public class Gestion_catalogo {
+public class Gestion_catalogo implements iControlJuegos {
 
     private Map<Integer, Producto> catalogo;
 
@@ -262,4 +263,54 @@ public class Gestion_catalogo {
 
         return eliminado;
     }
+
+    // =====================================================
+    //             IMPLEMENTACIÓN DE iControlJuegos
+    // =====================================================
+
+    // En esta clase el alta representa publicar un producto nuevo.
+    @Override
+    public boolean darAltaJuego(Juego juego) {
+        return agregarProducto(juego);
+    }
+
+    @Override
+    public boolean darAltaDLC(DLC dlc) {
+        return agregarProducto(dlc);
+    }
+
+    @Override
+    public boolean darBajaJuego(int id) {
+        if (!(buscarProductoPorID(id) instanceof Juego)) {
+            return false;
+        }
+        return darDeBajaProducto(id);
+    }
+
+    @Override
+    public boolean darBajaDLC(int id) {
+        if (!(buscarProductoPorID(id) instanceof DLC)) {
+            return false;
+        }
+        return darDeBajaProducto(id);
+    }
+
+    @Override
+    public boolean modificarJuego(Juego juego) {
+        if (juego == null ||
+                !(buscarProductoPorID(juego.getId()) instanceof Juego)) {
+            return false;
+        }
+        return modificarProducto(juego);
+    }
+
+    @Override
+    public boolean modificarDLC(DLC dlc) {
+        if (dlc == null ||
+                !(buscarProductoPorID(dlc.getId()) instanceof DLC)) {
+            return false;
+        }
+        return modificarProducto(dlc);
+    }
+
 }

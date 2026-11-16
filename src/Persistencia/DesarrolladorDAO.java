@@ -135,22 +135,23 @@ public class DesarrolladorDAO {
 
     // Actualizar datos del desarrollador, ganancias, etc.
     public boolean actualizar(Desarrollador desarrollador) {
-        String sql = "UPDATE desarrolladores SET username = ?, email = ?, estado = ?, descripcion = ?, nacionalidad = ?, nombre = ?, apellido = ?, fecha_nacimiento = ?, ganancias = ?, valoracion_general = ? WHERE id = ?";
+        String sql = "UPDATE desarrolladores SET username = ?, contrasenia = ?, email = ?, estado = ?, descripcion = ?, nacionalidad = ?, nombre = ?, apellido = ?, fecha_nacimiento = ?, ganancias = ?, valoracion_general = ? WHERE id = ?";
 
         try (Connection con = Conexion.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, desarrollador.getUsername());
-            ps.setString(2, desarrollador.getEmail());
-            ps.setBoolean(3, desarrollador.getEstado());
-            ps.setString(4, desarrollador.getDescripcion());
-            ps.setString(5, desarrollador.getNacionalidad());
-            ps.setString(6, desarrollador.getNombre());
-            ps.setString(7, desarrollador.getApellido());
-            ps.setObject(7, desarrollador.getFechaNacimiento()); // Ojo con los índices si se ajustan
-            ps.setDouble(9, desarrollador.getGanancias());
-            ps.setDouble(10, desarrollador.getValoracionGeneral());
-            ps.setInt(11, desarrollador.getId());
+            ps.setString(2, desarrollador.getContrasenia());
+            ps.setString(3, desarrollador.getEmail());
+            ps.setBoolean(4, desarrollador.getEstado());
+            ps.setString(5, desarrollador.getDescripcion());
+            ps.setString(6, desarrollador.getNacionalidad());
+            ps.setString(7, desarrollador.getNombre());
+            ps.setString(8, desarrollador.getApellido());
+            ps.setObject(9, desarrollador.getFechaNacimiento());
+            ps.setDouble(10, desarrollador.getGanancias());
+            ps.setDouble(11, desarrollador.getValoracionGeneral());
+            ps.setInt(12, desarrollador.getId());
 
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {

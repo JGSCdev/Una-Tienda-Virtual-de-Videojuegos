@@ -570,4 +570,163 @@ public class ClienteDAO {
         }
         return null;
     }
+
+    // ==========================================
+    //       OPERACIONES DE COMPRA Y SALDO
+    // ==========================================
+
+    /**
+     * Realiza una compra de manera transaccional: descuenta el saldo,
+     * agrega el producto a la biblioteca y lo quita del carrito.
+     * Si cualquiera de esos pasos falla, se revierte toda la operación.
+     */
+    public boolean comprarProducto(int clienteId, int productoId, double precio) {
+
+        if (clienteId <= 0 || productoId <= 0 ||
+                !Double.isFinite(precio) || precio < 0) {
+            return false;
+        }
+
+        String sqlCliente =
+                "SELECT saldo, estado FROM clientes WHERE id = ? FOR UPDATE";
+        String sqlProducto =
+                "SELECT precio, estado FROM productos WHERE id = ? FOR UPDATE";
+        String sqlBiblioteca =
+                "SELECT 1 FROM cliente_biblioteca WHERE cliente_id = ? AND producto_id = ?";
+        String sqlDescontar =
+                "UPDATE clientes SET saldo = saldo - ? WHERE id = ? AND saldo >= ? AND estado = TRUE";
+        String sqlBibliotecaInsert =
+                "INSERT INTO cliente_biblioteca (cliente_id, producto_id) VALUES (?, ?)";
+        String sqlCarritoDelete =
+                "DELETE FROM cliente_carrito WHERE cliente_id = ? AND producto_id = ?";
+
+        Connection con = null;
+
+        try {
+            con = Conexion.getConnection();
+            con.setAutoCommit(false);
+
+            // Bloqueamos la fila del cliente para evitar dos compras simultáneas
+            // que intenten gastar el mismo saldo.
+            double saldoActual;
+            try (PreparedStatement ps = con.prepareStatement(sqlCliente)) {
+                ps.setInt(1, clienteId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next() || !rs.getBoolean("estado")) {
+                        con.rollback();
+                        return false;
+                    }
+                    saldoActual = rs.getDouble("saldo");
+                }
+            }
+
+            if (saldoActual < precio) {
+                con.rollback();
+                return false;
+            }
+
+            // Volvemos a validar el estado y el precio contra MySQL para no
+            // vender un producto que haya sido dado de baja o cuyo precio cambió.
+            try (PreparedStatement ps = con.prepareStatement(sqlProducto)) {
+                ps.setInt(1, productoId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next() || !rs.getBoolean("estado")
+                            || Double.compare(rs.getDouble("precio"), precio) != 0) {
+                        con.rollback();
+                        return false;
+                    }
+                }
+            }
+
+            // Evitamos cobrar dos veces un producto que ya pertenece al cliente.
+            try (PreparedStatement ps = con.prepareStatement(sqlBiblioteca)) {
+                ps.setInt(1, clienteId);
+                ps.setInt(2, productoId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        con.rollback();
+                        return false;
+                    }
+                }
+            }
+
+            // Para un producto gratuito no hace falta ejecutar un UPDATE que
+            // podría informar cero filas por no haber cambiado el saldo.
+            if (precio > 0) {
+                try (PreparedStatement ps = con.prepareStatement(sqlDescontar)) {
+                    ps.setDouble(1, precio);
+                    ps.setInt(2, clienteId);
+                    ps.setDouble(3, precio);
+                    if (ps.executeUpdate() == 0) {
+                        con.rollback();
+                        return false;
+                    }
+                }
+            }
+
+            try (PreparedStatement ps = con.prepareStatement(sqlBibliotecaInsert)) {
+                ps.setInt(1, clienteId);
+                ps.setInt(2, productoId);
+                if (ps.executeUpdate() == 0) {
+                    con.rollback();
+                    return false;
+                }
+            }
+
+            // Si el producto no estaba en el carrito, borrar cero filas es válido.
+            try (PreparedStatement ps = con.prepareStatement(sqlCarritoDelete)) {
+                ps.setInt(1, clienteId);
+                ps.setInt(2, productoId);
+                ps.executeUpdate();
+            }
+
+            con.commit();
+            return true;
+
+        } catch (SQLException e) {
+            if (con != null) {
+                try {
+                    con.rollback();
+                } catch (SQLException ex) {
+                    e.addSuppressed(ex);
+                }
+            }
+            e.printStackTrace();
+            return false;
+
+        } finally {
+            if (con != null) {
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /** Agrega saldo persistiendo el cambio en la base de datos. */
+    public boolean agregarSaldo(int clienteId, double monto) {
+
+        if (clienteId <= 0 || !Double.isFinite(monto) || monto <= 0) {
+            return false;
+        }
+
+        String sql =
+                "UPDATE clientes SET saldo = saldo + ? WHERE id = ? AND estado = TRUE";
+
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setDouble(1, monto);
+            ps.setInt(2, clienteId);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

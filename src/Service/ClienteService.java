@@ -7,161 +7,294 @@ import Excepciones.UsuarioServiceException;
 import Modelo.Cliente;
 import Modelo.Producto;
 import Persistencia.ClienteDAO;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-
-
+/**
+ * Servicio de clientes. Coordina las reglas del modelo, la colección en memoria
+ * y la persistencia en MySQL.
+ */
 public class ClienteService {
 
     private final ColeccionUsuariosGenerica<Cliente> repositorioMemoria;
     private final ClienteDAO clienteDAO;
 
-    //Constructor del servicio. Inicializa la estructura en memoria y el DAO, y precarga los clientes existentes en la base de datos.
     public ClienteService() {
         this.repositorioMemoria = new ColeccionUsuariosGenerica<>();
         this.clienteDAO = new ClienteDAO();
         cargarClientesDesdeBD();
     }
 
-    private void cargarClientesDesdeBD() {//Metodo auxiliar privado para sincronizar la memoria con la base de datos al arrancar.
+    // Carga al iniciar la aplicación los clientes que existen en la base de datos.
+    private void cargarClientesDesdeBD() {
         List<Cliente> clientesBD = clienteDAO.listarTodos();
-        for (Cliente c : clientesBD) {
-            repositorioMemoria.agregar(c);
+        for (Cliente cliente : clientesBD) {
+            repositorioMemoria.agregar(cliente);
         }
     }
 
-    // ==========================================
-    //              OPERACIONES CRUD
-    // ==========================================
+    // =====================================================
+    //                    OPERACIONES CRUD
+    // =====================================================
 
-    public void registrarCliente(Cliente cliente) {//Registra un nuevo cliente en el sistema
-        if (cliente == null) {//primero verifica si el cliente es nulo
-
-            throw new IllegalArgumentException("El cliente a registrar no puede ser nulo.");//si el cliente es nulo, lanza IllegalArgumentException.
-        }
-
-        if (repositorioMemoria.existe(cliente.getId())) { // despues valida si esta ya en la base de datos
-            throw new UsuarioDuplicadoException("Ya existe un cliente con el ID en memoria: " + cliente.getId());//si el ID ya existe en memoria, lanza UsuarioDuplicadoException.
-        }
-
-        boolean insertadoEnBD = clienteDAO.insertar(cliente); // se inserta ese cliente a la base de datos
-
-        if (!insertadoEnBD) { // despues verifica si se logro ingresar ese usuario a la base de datos
-            throw new UsuarioServiceException("No se pudo registrar el cliente en la base de datos.");//si falla la inserción en la base de datos, lanza UsuarioServiceException.
-        }
-
-        repositorioMemoria.agregar(cliente);// si paso todas las verificaciones lo agrega a la coleccion en memoria
-    }
-
-    public Cliente buscarCliente(int id) {//Busca un cliente por su ID
-
-        Cliente cliente = repositorioMemoria.buscar(id);//Primero revisa en memoria si esta ese cliente (esto es por que seria mas rapido buscarlo en la memoria antes que en la BD). si es que llega a no estar, consulta la base de datos.
+    public void registrarCliente(Cliente cliente) {
 
         if (cliente == null) {
-            // Intentamos buscar en la BD si no estaba en memoria
+            throw new IllegalArgumentException("El cliente a registrar no puede ser nulo.");
+        }
+
+        if (cliente.getId() != 0 || repositorioMemoria.existe(cliente.getId())) {
+            throw new UsuarioDuplicadoException(
+                    "El cliente ya tiene un ID asignado o está registrado."
+            );
+        }
+
+        boolean insertadoEnBD = clienteDAO.insertar(cliente);
+
+        if (!insertadoEnBD) {
+            throw new UsuarioServiceException(
+                    "No se pudo registrar el cliente en la base de datos."
+            );
+        }
+
+        repositorioMemoria.agregar(cliente);
+    }
+
+    public Cliente buscarCliente(int id) {
+
+        if (id <= 0) {
+            throw new IllegalArgumentException("El ID del cliente debe ser positivo.");
+        }
+
+        Cliente cliente = repositorioMemoria.buscar(id);
+
+        if (cliente == null) {
             cliente = clienteDAO.buscarPorId(id);
+
             if (cliente != null) {
-                repositorioMemoria.agregar(cliente); // Lo cargamos a memoria para futuras consultas
+                repositorioMemoria.agregar(cliente);
             } else {
-                throw new UsuarioNoEncontradoException(id); //lo lanza si el cliente no existe en ninguna parte.
+                throw new UsuarioNoEncontradoException(id);
             }
         }
+
         return cliente;
     }
 
-
-    public Collection<Cliente> obtenerTodosLosClientes() {// Obtiene una colección de todos los clientes registrados
+    public Collection<Cliente> obtenerTodosLosClientes() {
         return repositorioMemoria.obtenerTodos();
     }
 
+    public void actualizarCliente(Cliente cliente) {
 
-    public void actualizarCliente(Cliente cliente) {//Actualiza la información personal de un cliente existente
         if (cliente == null) {
-            throw new IllegalArgumentException("El cliente a actualizar no puede ser nulo."); //si el cliente es nulo, lanza IllegalArgumentException.
+            throw new IllegalArgumentException("El cliente a actualizar no puede ser nulo.");
         }
 
-        // Validamos que el cliente realmente exista
         buscarCliente(cliente.getId());
 
-        boolean actualizadoEnBD = clienteDAO.actualizar(cliente);
-
-        if (!actualizadoEnBD) {
-            throw new UsuarioServiceException("No se pudo actualizar el cliente con ID " + cliente.getId() + " en la base de datos."); // lanza UsuarioServiceException si falla la modificacion
+        if (!clienteDAO.actualizar(cliente)) {
+            throw new UsuarioServiceException(
+                    "No se pudo actualizar el cliente con ID " + cliente.getId() + "."
+            );
         }
 
-        // Actualizamos también en memoria volviéndolo a agregar
         repositorioMemoria.eliminar(cliente.getId());
         repositorioMemoria.agregar(cliente);
     }
 
-    public void eliminarCliente(int id) { //Elimina un cliente del sistema por su ID
+    public void eliminarCliente(int id) {
 
-        buscarCliente(id);// Valida existencia (lanza UsuarioNoEncontradoException si no existe)
+        buscarCliente(id);
 
-        boolean eliminadoEnBD = clienteDAO.eliminar(id);
-        if (!eliminadoEnBD) {
-            throw new UsuarioServiceException("Error al intentar eliminar el cliente con ID " + id + " de la base de datos."); // lanza UsuarioServiceException si falla la eliminación en la base de datos.
+        if (!clienteDAO.eliminar(id)) {
+            throw new UsuarioServiceException(
+                    "No se pudo eliminar el cliente con ID " + id + "."
+            );
         }
 
-        // Eliminamos en memoria
         repositorioMemoria.eliminar(id);
     }
 
+    // =====================================================
+    //                 CARRITO DE COMPRAS
+    // =====================================================
 
-    // ==========================================
-    //      MÉTODOS DE NEGOCIO Y COLECCIONES
-    // ==========================================
+    /** Agrega un producto al carrito y sincroniza la tabla cliente_carrito. */
+    public boolean agregarProductoAlCarrito(int clienteId, Producto producto) {
 
-    public void agregarProductoAlCarrito(int clienteId, Producto producto) {// Agrega un producto al carrito de compras de un cliente.
-        if (producto == null) {
-            throw new IllegalArgumentException("El producto no puede ser nulo.");
+        if (producto == null || producto.getId() <= 0 || !producto.isEstado()) {
+            return false;
         }
 
-        Cliente cliente = buscarCliente(clienteId); // Lanza UsuarioNoEncontradoException si no existe
+        Cliente cliente = buscarCliente(clienteId);
 
-        boolean agregadoEnMemoria = cliente.getCarrito().add(producto);
+        // Se utiliza el método del modelo, ya que getCarrito() devuelve
+        // una vista no modificable de la colección.
+        if (!cliente.getEstado() || cliente.getBiblioteca().contains(producto)
+                || !cliente.agregarAlCarrito(producto)) {
+            return false;
+        }
 
-        if (agregadoEnMemoria) {
+        if (!clienteDAO.agregarAlCarrito(clienteId, producto.getId())) {
+            cliente.eliminarDelCarrito(producto);
+            throw new UsuarioServiceException(
+                    "No se pudo guardar el producto en el carrito de la base de datos."
+            );
+        }
 
-            boolean bdExito = clienteDAO.agregarAlCarrito(clienteId, producto.getId());
+        return true;
+    }
 
-            if (!bdExito) {
+    /** Quita un producto del carrito y persiste la eliminación. */
+    public boolean eliminarProductoDelCarrito(int clienteId, Producto producto) {
 
-                cliente.getCarrito().remove(producto);
-                throw new UsuarioServiceException("El producto se añadió en memoria pero falló la persistencia en la base de datos.");
+        if (producto == null) {
+            return false;
+        }
+
+        Cliente cliente = buscarCliente(clienteId);
+
+        if (!cliente.getCarrito().contains(producto)) {
+            return false;
+        }
+
+        if (!clienteDAO.eliminarDelCarrito(clienteId, producto.getId())) {
+            return false;
+        }
+
+        return cliente.eliminarDelCarrito(producto);
+    }
+
+    /** Vacía el carrito en la base de datos y en memoria. */
+    public boolean vaciarCarrito(int clienteId) {
+
+        Cliente cliente = buscarCliente(clienteId);
+
+        if (!clienteDAO.vaciarCarrito(clienteId)) {
+            return false;
+        }
+
+        cliente.setCarrito(new ArrayList<>());
+        return true;
+    }
+
+    // =====================================================
+    //                       COMPRAS
+    // =====================================================
+
+    /**
+     * Compra un producto. La operación de base de datos es transaccional:
+     * descuenta el saldo, incorpora el producto a la biblioteca y lo quita
+     * del carrito. El modelo se actualiza únicamente si MySQL confirma todo.
+     */
+    public boolean comprarProducto(int clienteId, Producto producto) {
+
+        if (producto == null || producto.getId() <= 0 || !producto.isEstado()) {
+            return false;
+        }
+
+        Cliente cliente = buscarCliente(clienteId);
+        double precio = producto.getPrecio();
+
+        if (!cliente.getEstado()
+                || !Double.isFinite(precio)
+                || precio < 0
+                || cliente.getSaldo() < precio
+                || cliente.getBiblioteca().contains(producto)) {
+            return false;
+        }
+
+        boolean compraPersistida = clienteDAO.comprarProducto(
+                clienteId,
+                producto.getId(),
+                precio
+        );
+
+        if (!compraPersistida) {
+            return false;
+        }
+
+        // Estas validaciones coinciden con las comprobadas antes de la transacción.
+        // Si el estado local estuviera desactualizado, recargamos al cliente.
+        if (!cliente.comprarProducto(producto)) {
+            repositorioMemoria.eliminar(clienteId);
+            Cliente actualizado = clienteDAO.buscarPorId(clienteId);
+            if (actualizado != null) {
+                repositorioMemoria.agregar(actualizado);
             }
         }
+
+        return true;
     }
 
-    public void agregarJuegoABiblioteca(int clienteId, int productoId) {//Agrega un juego directamente a la biblioteca del cliente.
+    // =====================================================
+    //                    SALDO DEL CLIENTE
+    // =====================================================
+
+    /** Agrega saldo de forma persistente. */
+    public boolean agregarSaldo(int clienteId, double monto) {
+
+        if (!Double.isFinite(monto) || monto <= 0) {
+            return false;
+        }
+
         Cliente cliente = buscarCliente(clienteId);
 
-        boolean bdExito = clienteDAO.agregarJuegoBiblioteca(clienteId, productoId);
-        if (!bdExito) {
-            throw new UsuarioServiceException("No se pudo agregar el juego a la biblioteca en la base de datos.");
+        if (!cliente.getEstado()
+                || !Double.isFinite(cliente.getSaldo() + monto)) {
+            return false;
         }
 
-        // Recargamos el cliente o actualizamos su biblioteca local desde la BD para mantener consistencia
-        cliente.setBiblioteca(clienteDAO.obtenerBiblioteca(clienteId));
+        if (!clienteDAO.agregarSaldo(clienteId, monto)) {
+            return false;
+        }
+
+        // El DAO ya confirmó la actualización; el modelo aplica la misma suma.
+        return cliente.agregarSaldo(monto);
     }
 
-    public void agregarAmigo(int clienteId, int amigoId) { //Agrega un amigo a la red de contactos del cliente.
+    // =====================================================
+    //                       AMIGOS
+    // =====================================================
+
+    public void agregarAmigo(int clienteId, int amigoId) {
+
         if (clienteId == amigoId) {
-            throw new IllegalArgumentException("Un cliente no puede agregarse a sí mismo como amigo.");
+            throw new IllegalArgumentException(
+                    "Un cliente no puede agregarse a sí mismo como amigo."
+            );
         }
 
-        // Validamos que ambos clientes existan
-        buscarCliente(clienteId);
+        Cliente cliente = buscarCliente(clienteId);
         buscarCliente(amigoId);
 
-        boolean bdExito = clienteDAO.agregarAmigo(clienteId, amigoId);
-        if (!bdExito) {
-            throw new UsuarioServiceException("No se pudo establecer la relación de amistad en la base de datos.");
+        if (!clienteDAO.agregarAmigo(clienteId, amigoId)) {
+            throw new UsuarioServiceException(
+                    "No se pudo establecer la relación de amistad en la base de datos."
+            );
         }
 
-        // Actualizamos la lista de amigos en memoria
-        Cliente cliente = buscarCliente(clienteId);
         cliente.setAmigos(clienteDAO.obtenerAmigos(clienteId));
+    }
+
+    public boolean eliminarAmigo(int clienteId, int amigoId) {
+
+        if (clienteId <= 0 || amigoId <= 0 || clienteId == amigoId) {
+            return false;
+        }
+
+        Cliente cliente = buscarCliente(clienteId);
+        Cliente amigo = buscarCliente(amigoId);
+
+        if (!clienteDAO.eliminarAmigo(clienteId, amigoId)) {
+            return false;
+        }
+
+        cliente.eliminarAmigo(amigo);
+        cliente.setAmigos(clienteDAO.obtenerAmigos(clienteId));
+        return true;
     }
 }
