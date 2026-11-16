@@ -140,6 +140,42 @@ public class ClienteDAO {
 
 
 
+    /** Actualiza la contraseña de un cliente por intervención de un gestor. */
+    public boolean actualizarContrasenia(int id, String nuevaContrasenia) {
+        if (id <= 0 || nuevaContrasenia == null || nuevaContrasenia.isBlank()) {
+            return false;
+        }
+
+        String sql = "UPDATE clientes SET contrasenia = ? WHERE id = ?";
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nuevaContrasenia);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /** Activa o desactiva la cuenta de un cliente. */
+    public boolean actualizarEstado(int id, boolean activo) {
+        if (id <= 0) {
+            return false;
+        }
+
+        String sql = "UPDATE clientes SET estado = ? WHERE id = ?";
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setBoolean(1, activo);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean eliminar(int id) { // Elimina un cliente de la base de datos según su ID.
 
         String sql = "DELETE FROM clientes WHERE id = ?"; // (Las restricciones ON DELETE CASCADE en la BD se encargan de limpiar sus relaciones).
@@ -593,8 +629,8 @@ public class ClienteDAO {
         // en 1.000.000. Se bloquea la fila de la tabla fisica correspondiente.
         // No se utiliza la vista UNION productos para este bloqueo transaccional.
         String sqlProducto = (productoId >= 1_000_000)
-                ? "SELECT precio, estado FROM dlc WHERE id = ? FOR UPDATE"
-                : "SELECT precio, estado FROM juego WHERE id = ? FOR UPDATE";
+                ? "SELECT precio, estado, desarrollador_id FROM dlc WHERE id = ? FOR UPDATE"
+                : "SELECT precio, estado, desarrollador_id FROM juego WHERE id = ? FOR UPDATE";
         String sqlBiblioteca =
                 "SELECT 1 FROM cliente_biblioteca WHERE cliente_id = ? AND producto_id = ?";
         String sqlDescontar =
@@ -630,7 +666,9 @@ public class ClienteDAO {
             }
 
             // Volvemos a validar el estado y el precio contra MySQL para no
-            // vender un producto que haya sido dado de baja o cuyo precio cambió.
+            // vender un producto dado de baja o cuyo precio haya cambiado.
+            // También obtenemos al propietario para acreditar la venta.
+            int desarrolladorId;
             try (PreparedStatement ps = con.prepareStatement(sqlProducto)) {
                 ps.setInt(1, productoId);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -639,7 +677,13 @@ public class ClienteDAO {
                         con.rollback();
                         return false;
                     }
+                    desarrolladorId = rs.getInt("desarrollador_id");
                 }
+            }
+
+            if (desarrolladorId <= 0) {
+                con.rollback();
+                return false;
             }
 
             // Evitamos cobrar dos veces un producto que ya pertenece al cliente.
@@ -674,6 +718,22 @@ public class ClienteDAO {
                 if (ps.executeUpdate() == 0) {
                     con.rollback();
                     return false;
+                }
+            }
+
+            // Acreditamos al desarrollador el importe completo de la venta.
+            // Se realiza dentro de la misma transacción para que nunca quede
+            // una compra cobrada sin su ganancia correspondiente.
+            if (precio > 0) {
+                String sqlAcreditarGanancia =
+                        "UPDATE desarrolladores SET ganancias = ganancias + ? WHERE id = ?";
+                try (PreparedStatement ps = con.prepareStatement(sqlAcreditarGanancia)) {
+                    ps.setDouble(1, precio);
+                    ps.setInt(2, desarrolladorId);
+                    if (ps.executeUpdate() == 0) {
+                        con.rollback();
+                        return false;
+                    }
                 }
             }
 
