@@ -160,6 +160,42 @@ public class DesarrolladorDAO {
         return false;
     }
 
+    /** Actualiza la contraseña de un desarrollador por intervención de un gestor. */
+    public boolean actualizarContrasenia(int id, String nuevaContrasenia) {
+        if (id <= 0 || nuevaContrasenia == null || nuevaContrasenia.isBlank()) {
+            return false;
+        }
+
+        String sql = "UPDATE desarrolladores SET contrasenia = ? WHERE id = ?";
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nuevaContrasenia);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /** Activa o desactiva la cuenta de un desarrollador. */
+    public boolean actualizarEstado(int id, boolean activo) {
+        if (id <= 0) {
+            return false;
+        }
+
+        String sql = "UPDATE desarrolladores SET estado = ? WHERE id = ?";
+        try (Connection con = Conexion.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setBoolean(1, activo);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     // Elimina desarrollador
     public boolean eliminar(int id) {
         String sql = "DELETE FROM desarrolladores WHERE id = ?";
