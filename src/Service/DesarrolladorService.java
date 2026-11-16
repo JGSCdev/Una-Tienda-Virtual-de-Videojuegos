@@ -92,6 +92,42 @@ public class DesarrolladorService {
     }
 
 
+    /** Restablece la contraseña de un desarrollador desde el panel de gestores. */
+    public boolean restablecerContraseniaComoGestor(int id, String nuevaContrasenia) {
+        Desarrollador desarrollador = buscarDesarrollador(id);
+        if (!desarrollador.validarContraseniaNueva(nuevaContrasenia)) {
+            return false;
+        }
+        if (!desarrolladorDAO.actualizarContrasenia(id, nuevaContrasenia)) {
+            return false;
+        }
+        return desarrollador.restablecerContrasenia(nuevaContrasenia);
+    }
+
+    /** Cambia el estado de la cuenta de un desarrollador desde el panel de gestores. */
+    public boolean cambiarEstadoComoGestor(int id, boolean activo) {
+        Desarrollador desarrollador = buscarDesarrollador(id);
+        if (desarrollador.getEstado() == activo) {
+            return true;
+        }
+        if (!desarrolladorDAO.actualizarEstado(id, activo)) {
+            return false;
+        }
+        desarrollador.setEstado(activo);
+        return true;
+    }
+
+    /** Sincroniza en memoria las ganancias después de una compra confirmada en MySQL. */
+    public void acreditarGananciasEnMemoria(int desarrolladorId, double importe) {
+        if (desarrolladorId <= 0 || !Double.isFinite(importe) || importe < 0) {
+            return;
+        }
+        Desarrollador desarrollador = repositorioMemoria.buscar(desarrolladorId);
+        if (desarrollador != null && Double.isFinite(desarrollador.getGanancias() + importe)) {
+            desarrollador.setGanancias(desarrollador.getGanancias() + importe);
+        }
+    }
+
     public void eliminarDesarrollador(int id) {// Elimina un desarrollador del sistema por su ID
         // Valida existencia (lanza excepción si no existe)
         buscarDesarrollador(id);// lanza UsuarioNoEncontradoException si el desarrollador no existe.
