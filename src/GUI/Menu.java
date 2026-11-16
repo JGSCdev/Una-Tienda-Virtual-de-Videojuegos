@@ -16,11 +16,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * Menú de consola de la tienda virtual.
- * El menú solicita datos y muestra resultados; las reglas de negocio y la
- * persistencia se delegan a los servicios y a Gestion_catalogo.
- */
 public class Menu {
 
     private final Scanner teclado;
@@ -61,7 +56,6 @@ public class Menu {
             System.out.println("4. Iniciar sesión como soporte");
             System.out.println("5. Registrarse como cliente");
             System.out.println("6. Registrarse como desarrollador");
-            System.out.println("7. Registrar una cuenta de administrador");
             System.out.println("0. Salir");
             System.out.println("====================================");
 
@@ -74,7 +68,6 @@ public class Menu {
                 case 4 -> iniciarSesionSoporte();
                 case 5 -> registrarCliente();
                 case 6 -> registrarDesarrollador();
-                case 7 -> registrarAdministrador();
                 case 0 -> System.out.println("¡Gracias por utilizar nuestra tienda!");
                 default -> System.out.println("Opción inválida.");
             }
@@ -247,33 +240,6 @@ public class Menu {
 
         } catch (Exception e) {
             System.out.println("No se pudo registrar el desarrollador: " + e.getMessage());
-        }
-    }
-
-    /**
-     * El PIN solicitado aquí es el PIN personal de acceso del administrador.
-     * El proyecto no define un PIN maestro/de invitación para autorizar altas.
-     */
-    private void registrarAdministrador() {
-
-        System.out.println("\n--- REGISTRO DE ADMINISTRADOR ---");
-        System.out.println("El PIN que ingrese será su credencial personal de acceso.");
-
-        try {
-            String contrasenia = leerTextoObligatorio("Contraseña: ");
-            String pin = leerTextoObligatorio("PIN personal: ");
-
-            Administrador administrador = new Administrador(contrasenia, pin);
-
-            if (administradorService.insertar(administrador)) {
-                System.out.println("Administrador registrado correctamente.");
-                System.out.println("Tu ID de administrador es: " + administrador.getId());
-            } else {
-                System.out.println("No se pudo registrar el administrador.");
-            }
-
-        } catch (Exception e) {
-            System.out.println("No se pudo registrar el administrador: " + e.getMessage());
         }
     }
 
@@ -452,6 +418,9 @@ public class Menu {
 
         try {
             if (clienteService.comprarProducto(cliente.getId(), producto)) {
+                desarrolladorService.acreditarGananciasEnMemoria(
+                        producto.getDesarrollador().getId(), producto.getPrecio()
+                );
                 System.out.println("¡Compra realizada! El producto ya está en tu biblioteca.");
                 System.out.println("Saldo restante: $" + cliente.getSaldo());
             } else {
@@ -484,6 +453,9 @@ public class Menu {
         for (Producto producto : pendientes) {
             try {
                 if (clienteService.comprarProducto(cliente.getId(), producto)) {
+                    desarrolladorService.acreditarGananciasEnMemoria(
+                            producto.getDesarrollador().getId(), producto.getPrecio()
+                    );
                     comprados++;
                     System.out.println("Comprado: " + producto.getNombre());
                 } else {
@@ -821,7 +793,7 @@ public class Menu {
 
     private void mostrarEstadisticasDesarrollador(Desarrollador desarrollador) {
         System.out.println("\n--- ESTADÍSTICAS ---");
-        System.out.println("Ganancias acumuladas: $" + desarrollador.getGanancias());
+        System.out.println("Saldo acumulado por ventas: $" + desarrollador.getGanancias());
         System.out.println("Valoración general: " + desarrollador.getValoracionGeneral());
         System.out.println("Productos publicados: " + desarrollador.obtenerCatalogoPropio().size());
     }
@@ -865,6 +837,7 @@ public class Menu {
             System.out.println("9. Realizar backup (simulado)");
             System.out.println("10. Restaurar backup (simulado)");
             System.out.println("11. Cambiar contraseña y PIN");
+            System.out.println("12. Gestionar cuentas de usuarios");
             System.out.println("0. Cerrar sesión");
             System.out.println("=================================");
 
@@ -882,11 +855,107 @@ public class Menu {
                 case 9 -> administrador.realizarBackup();
                 case 10 -> administrador.restaurarBackup();
                 case 11 -> cambiarCredencialesAdministrador(administrador);
+                case 12 -> gestionarUsuarios();
                 case 0 -> System.out.println("Sesión de administrador cerrada.");
                 default -> System.out.println("Opción inválida.");
             }
 
         } while (opcion != 0);
+    }
+
+    /** Herramientas de gestión compartidas por administración y soporte. */
+    private void gestionarUsuarios() {
+        int opcion;
+        do {
+            System.out.println("\n--- GESTIÓN DE CUENTAS ---");
+            System.out.println("1. Listar clientes");
+            System.out.println("2. Listar desarrolladores");
+            System.out.println("3. Restablecer contraseña de un usuario");
+            System.out.println("4. Activar o desactivar una cuenta");
+            System.out.println("0. Volver");
+            opcion = leerEntero("Seleccione una opción: ");
+
+            switch (opcion) {
+                case 1 -> listarCuentasClientes();
+                case 2 -> listarCuentasDesarrolladores();
+                case 3 -> restablecerContraseniaUsuario();
+                case 4 -> cambiarEstadoCuentaUsuario();
+                case 0 -> { }
+                default -> System.out.println("Opción inválida.");
+            }
+        } while (opcion != 0);
+    }
+
+    private void listarCuentasClientes() {
+        System.out.println("\n--- CUENTAS DE CLIENTES ---");
+        Collection<Cliente> clientes = clienteService.obtenerTodosLosClientes();
+        if (clientes.isEmpty()) {
+            System.out.println("No hay clientes registrados.");
+            return;
+        }
+        for (Cliente cliente : clientes) {
+            System.out.println("ID: " + cliente.getId()
+                    + " | Usuario: " + cliente.getUsername()
+                    + " | Email: " + cliente.getEmail()
+                    + " | Estado: " + (cliente.getEstado() ? "Activo" : "Inactivo"));
+        }
+    }
+
+    private void listarCuentasDesarrolladores() {
+        System.out.println("\n--- CUENTAS DE DESARROLLADORES ---");
+        Collection<Desarrollador> desarrolladores =
+                desarrolladorService.obtenerTodosLosDesarrolladores();
+        if (desarrolladores.isEmpty()) {
+            System.out.println("No hay desarrolladores registrados.");
+            return;
+        }
+        for (Desarrollador desarrollador : desarrolladores) {
+            System.out.println("ID: " + desarrollador.getId()
+                    + " | Usuario: " + desarrollador.getUsername()
+                    + " | Email: " + desarrollador.getEmail()
+                    + " | Estado: " + (desarrollador.getEstado() ? "Activo" : "Inactivo"));
+        }
+    }
+
+    private int seleccionarTipoCuentaUsuario() {
+        System.out.println("1. Cliente");
+        System.out.println("2. Desarrollador");
+        return leerOpcionEnRango("Tipo de cuenta: ", 1, 2);
+    }
+
+    private void restablecerContraseniaUsuario() {
+        int tipo = seleccionarTipoCuentaUsuario();
+        int id = leerEntero("ID del usuario: ");
+        String nueva = leerTextoObligatorio("Nueva contraseña (mínimo 10 caracteres, sin espacios): ");
+        try {
+            boolean actualizado = (tipo == 1)
+                    ? clienteService.restablecerContraseniaComoGestor(id, nueva)
+                    : desarrolladorService.restablecerContraseniaComoGestor(id, nueva);
+            System.out.println(actualizado
+                    ? "Contraseña restablecida correctamente."
+                    : "No se pudo cambiar la contraseña. Verificá que cumpla los requisitos y que sea distinta de la anterior.");
+        } catch (Exception e) {
+            System.out.println("No se pudo restablecer la contraseña: " + e.getMessage());
+        }
+    }
+
+    private void cambiarEstadoCuentaUsuario() {
+        int tipo = seleccionarTipoCuentaUsuario();
+        int id = leerEntero("ID del usuario: ");
+        System.out.println("1. Activar cuenta");
+        System.out.println("2. Desactivar cuenta");
+        int opcionEstado = leerOpcionEnRango("Acción: ", 1, 2);
+        boolean activar = opcionEstado == 1;
+        try {
+            boolean actualizado = (tipo == 1)
+                    ? clienteService.cambiarEstadoComoGestor(id, activar)
+                    : desarrolladorService.cambiarEstadoComoGestor(id, activar);
+            System.out.println(actualizado
+                    ? (activar ? "Cuenta activada correctamente." : "Cuenta desactivada correctamente.")
+                    : "No se pudo modificar el estado de la cuenta.");
+        } catch (Exception e) {
+            System.out.println("No se pudo modificar el estado: " + e.getMessage());
+        }
     }
 
     private void mostrarCatalogoAdministrador() {
@@ -1178,6 +1247,7 @@ public class Menu {
             System.out.println("2. Atender una queja");
             System.out.println("3. Cambiar contraseña");
             System.out.println("4. Cambiar PIN");
+            System.out.println("5. Gestionar cuentas de usuarios");
             System.out.println("0. Cerrar sesión");
             System.out.println("==================================");
 
@@ -1188,6 +1258,7 @@ public class Menu {
                 case 2 -> atenderQueja(soporte);
                 case 3 -> cambiarCredencialSoporte(soporte, true);
                 case 4 -> cambiarCredencialSoporte(soporte, false);
+                case 5 -> gestionarUsuarios();
                 case 0 -> System.out.println("Sesión de soporte cerrada.");
                 default -> System.out.println("Opción inválida.");
             }
