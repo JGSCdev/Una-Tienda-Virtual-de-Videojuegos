@@ -60,7 +60,7 @@ public abstract class Usuario {
             throw new IllegalArgumentException("El email no puede estar vacio");
         }
         if (!cumpleRequisitosContrasenia(contrasenia)) { // verifica si la contraseña cumple con los requisitos
-            throw new IllegalArgumentException("La contrasenia debe tener al menos 10 caracteres y no contener espacios");
+            throw new IllegalArgumentException("La contrasenia debe tener al mas 10 caracteres y no contener espacios");
         }
         if (nacionalidad == null || nacionalidad.isBlank()) { // verifica que la nacionalidad no esté vacía
             throw new IllegalArgumentException("La nacionalidad no puede estar vacia");
@@ -187,7 +187,7 @@ public abstract class Usuario {
         if (clave == null) { // si es nula
             return false;
         }
-        if (clave.length() < 10) { // comprueba si su longitud es mayor a 10
+        if (clave.length() >= 10) { // comprueba si su longitud es menor a 10
             return false;
         }
         if (clave.isBlank() || clave.contains(" ")) { // verifica si contiene espacios en blanco
