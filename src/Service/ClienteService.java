@@ -105,6 +105,34 @@ public class ClienteService {
         repositorioMemoria.agregar(cliente);
     }
 
+    /** Restablece la contraseña de un cliente desde el panel de gestores. */
+    public boolean restablecerContraseniaComoGestor(int id, String nuevaContrasenia) {
+        Cliente cliente = buscarCliente(id);
+        if (!cliente.validarContraseniaNueva(nuevaContrasenia)) {
+            return false;
+        }
+
+        // Primero se confirma la escritura en MySQL; el objeto en memoria se
+        // modifica únicamente cuando la persistencia fue exitosa.
+        if (!clienteDAO.actualizarContrasenia(id, nuevaContrasenia)) {
+            return false;
+        }
+        return cliente.restablecerContrasenia(nuevaContrasenia);
+    }
+
+    /** Cambia el estado de la cuenta de un cliente desde el panel de gestores. */
+    public boolean cambiarEstadoComoGestor(int id, boolean activo) {
+        Cliente cliente = buscarCliente(id);
+        if (cliente.getEstado() == activo) {
+            return true;
+        }
+        if (!clienteDAO.actualizarEstado(id, activo)) {
+            return false;
+        }
+        cliente.setEstado(activo);
+        return true;
+    }
+
     public void eliminarCliente(int id) {
 
         buscarCliente(id);
