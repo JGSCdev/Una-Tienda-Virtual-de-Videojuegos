@@ -4,12 +4,15 @@
 
 import GUI.Menu;
 
-void main() {
-    try {
-        Menu menu = new Menu();
-        menu.iniciar();
-    } catch (Exception e) {
-        System.out.println("No se pudo iniciar la tienda: " + e.getMessage());
-        e.printStackTrace();
-    }
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            Menu menu = new Menu();
+            menu.iniciar();
+        } catch (Exception e) {
+            System.out.println("No se pudo iniciar la tienda: " + e.getMessage());
+            e.printStackTrace();
+        }    }
 }
+
